@@ -16,71 +16,71 @@ import { SectionHeading } from "@/components/ui/section-heading";
 const benefits = [
   {
     icon: Globe,
-    title: "Extended Reach",
+    title: "Portée Étendue",
     description:
-      "Leverage our local expertise and networks to expand your impact across Guinea.",
+      "Profitez de notre expertise locale et de nos réseaux pour étendre votre impact à travers la Guinée.",
   },
   {
     icon: Lightbulb,
-    title: "Innovation Access",
+    title: "Accès à l'Innovation",
     description:
-      "Benefit from our cutting-edge approaches to sustainable sanitation solutions.",
+      "Bénéficiez de nos approches de pointe en matière de solutions d'assainissement durables.",
   },
   {
     icon: Users,
-    title: "Community Trust",
+    title: "Confiance Communautaire",
     description:
-      "Tap into our established relationships with communities and local leaders.",
+      "Profitez de nos relations établies avec les communautés et les leaders locaux.",
   },
   {
     icon: Building,
-    title: "Operational Excellence",
+    title: "Excellence Opérationnelle",
     description:
-      "Partner with a team known for quality execution and reliable delivery.",
+      "Partenariat avec une équipe reconnue pour la qualité d'exécution et la fiabilité.",
   },
 ];
 
 const partnerTypes = [
   {
-    title: "NGOs & Development Organizations",
+    title: "ONG & Organisations de Développement",
     description:
-      "Collaborate on projects that align with sustainable development goals and create lasting community impact.",
+      "Collaborez sur des projets alignés sur les objectifs de développement durable et créant un impact communautaire durable.",
   },
   {
-    title: "Government Bodies",
+    title: "Organismes Gouvernementaux",
     description:
-      "Partner with us to implement public health initiatives and infrastructure development programs.",
+      "Partenariat pour mettre en œuvre des initiatives de santé publique et des programmes de développement d'infrastructures.",
   },
   {
-    title: "Private Sector",
+    title: "Secteur Privé",
     description:
-      "Corporate partnerships for CSR initiatives, facility management, and sustainable business practices.",
+      "Partenariats d'entreprise pour les initiatives RSE, la gestion des installations et les pratiques commerciales durables.",
   },
   {
-    title: "Academic Institutions",
+    title: "Institutions Académiques",
     description:
-      "Research collaborations and educational partnerships to advance sanitation knowledge and innovation.",
+      "Collaborations de recherche et partenariats éducatifs pour faire progresser les connaissances et l'innovation en assainissement.",
   },
 ];
 
 const caseStudies = [
   {
-    title: "Community Sanitation Project - Conakry",
+    title: "Projet d'Assainissement Communautaire - Conakry",
     description:
-      "Partnered with an international NGO to build 50 modern latrines and train 500 community members.",
-    outcome: "80% reduction in waterborne diseases",
+      "Partenariat avec une ONG internationale pour construire 50 latrines modernes et former 500 membres de la communauté.",
+    outcome: "Réduction de 80% des maladies hydriques",
   },
   {
-    title: "School Hygiene Initiative",
+    title: "Initiative d'Hygiène Scolaire",
     description:
-      "Collaborated with the Ministry of Education to improve sanitation facilities in 20 schools.",
-    outcome: "Reached 5,000+ students",
+      "Collaboration avec le Ministère de l'Éducation pour améliorer les installations sanitaires dans 20 écoles.",
+    outcome: "Plus de 5 000 élèves touchés",
   },
   {
-    title: "Waste Management Program",
+    title: "Programme de Gestion des Déchets",
     description:
-      "Joint venture with local government to implement community-based waste collection.",
-    outcome: "70% increase in waste collection coverage",
+      "Coentreprise avec le gouvernement local pour mettre en place une collecte des déchets communautaire.",
+    outcome: "Augmentation de 70% de la couverture de collecte",
   },
 ];
 
@@ -96,15 +96,15 @@ export default function Partnership() {
             className="max-w-3xl"
           >
             <span className="inline-block px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
-              Partnership
+              Partenariat
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
-              Together for a <span className="gradient-text">Better</span> Tomorrow
+              Ensemble pour un <span className="gradient-text">Avenir Meilleur</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Join us in creating sustainable impact. Whether you're an NGO,
-              government body, or private organization, we have partnership
-              opportunities that align with your mission.
+              Rejoignez-nous pour créer un impact durable. Que vous soyez une ONG,
+              un organisme gouvernemental ou une organisation privée, nous avons
+              des opportunités de partenariat alignées sur votre mission.
             </p>
           </motion.div>
         </div>
@@ -114,9 +114,9 @@ export default function Partnership() {
       <section className="py-24">
         <div className="section-container">
           <SectionHeading
-            badge="Why Partner With Us"
-            title="Unlock New Possibilities"
-            description="Discover the advantages of partnering with Ecosense Solutions."
+            badge="Pourquoi Devenir Partenaire"
+            title="Débloquer de Nouvelles Possibilités"
+            description="Découvrez les avantages d'un partenariat avec Ecosense Solutions."
           />
 
           <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -148,9 +148,9 @@ export default function Partnership() {
       <section className="py-24 bg-muted/30">
         <div className="section-container">
           <SectionHeading
-            badge="Who We Partner With"
-            title="Diverse Collaboration Opportunities"
-            description="We work with organizations across sectors to maximize impact."
+            badge="Avec Qui Nous Travaillons"
+            title="Opportunités de Collaboration Diverses"
+            description="Nous travaillons avec des organisations de tous secteurs pour maximiser l'impact."
           />
 
           <div className="mt-16 grid md:grid-cols-2 gap-8">
@@ -183,9 +183,9 @@ export default function Partnership() {
       <section className="py-24">
         <div className="section-container">
           <SectionHeading
-            badge="Success Stories"
-            title="Partnerships That Made a Difference"
-            description="Real examples of what we've achieved together with our partners."
+            badge="Histoires de Succès"
+            title="Des Partenariats Qui Ont Fait la Différence"
+            description="Des exemples concrets de ce que nous avons accompli avec nos partenaires."
           />
 
           <div className="mt-16 grid md:grid-cols-3 gap-8">
@@ -224,15 +224,15 @@ export default function Partnership() {
             className="text-center max-w-2xl mx-auto"
           >
             <h2 className="text-3xl font-bold text-foreground mb-6">
-              Ready to Partner?
+              Prêt à Devenir Partenaire ?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Let's discuss how we can work together to create sustainable impact.
-              Reach out to start the conversation.
+              Discutons de la façon dont nous pouvons travailler ensemble pour
+              créer un impact durable. Contactez-nous pour démarrer la conversation.
             </p>
             <Button asChild size="lg" className="shadow-glow">
               <Link to="/contact">
-                Start a Conversation
+                Démarrer une Conversation
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>

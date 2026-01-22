@@ -7,75 +7,83 @@ import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-const categories = ["All", "Sustainability", "Community", "Innovation", "Health"];
+const categories = ["Tous", "Durabilité", "Communauté", "Innovation", "Santé"];
 
 const blogPosts = [
   {
     slug: "future-sustainable-sanitation",
-    title: "The Future of Sustainable Sanitation in West Africa",
+    title: "L'Avenir de l'Assainissement Durable en Afrique de l'Ouest",
     excerpt:
-      "Exploring innovative approaches to community hygiene and infrastructure development that are shaping the future of public health in the region.",
+      "Explorer des approches innovantes pour l'hygiène communautaire et le développement d'infrastructures qui façonnent l'avenir de la santé publique dans la région.",
     category: "Innovation",
-    date: "January 15, 2026",
-    readTime: "5 min read",
+    date: "15 Janvier 2026",
+    readTime: "5 min de lecture",
   },
   {
     slug: "community-engagement",
-    title: "Community Engagement: Key to Lasting Change",
+    title: "Engagement Communautaire : Clé du Changement Durable",
     excerpt:
-      "How local involvement and ownership transforms sanitation outcomes and creates sustainable behavioral change.",
-    category: "Community",
-    date: "January 10, 2026",
-    readTime: "4 min read",
+      "Comment l'implication locale et l'appropriation transforment les résultats en matière d'assainissement et créent un changement comportemental durable.",
+    category: "Communauté",
+    date: "10 Janvier 2026",
+    readTime: "4 min de lecture",
   },
   {
     slug: "waste-to-value",
-    title: "Waste-to-Value: Turning Challenges into Opportunities",
+    title: "Déchets en Valeur : Transformer les Défis en Opportunités",
     excerpt:
-      "Innovative waste management practices that create economic value while protecting the environment.",
-    category: "Sustainability",
-    date: "January 5, 2026",
-    readTime: "6 min read",
+      "Pratiques innovantes de gestion des déchets qui créent de la valeur économique tout en protégeant l'environnement.",
+    category: "Durabilité",
+    date: "5 Janvier 2026",
+    readTime: "6 min de lecture",
   },
   {
     slug: "hygiene-education-schools",
-    title: "Hygiene Education in Schools: Building Healthy Habits Early",
+    title: "L'Éducation à l'Hygiène dans les Écoles : Construire des Habitudes Saines Tôt",
     excerpt:
-      "The impact of comprehensive hygiene education programs on student health and community well-being.",
-    category: "Health",
-    date: "December 28, 2025",
-    readTime: "5 min read",
+      "L'impact des programmes complets d'éducation à l'hygiène sur la santé des élèves et le bien-être communautaire.",
+    category: "Santé",
+    date: "28 Décembre 2025",
+    readTime: "5 min de lecture",
   },
   {
     slug: "sustainable-infrastructure",
-    title: "Designing Sustainable Sanitation Infrastructure",
+    title: "Concevoir des Infrastructures d'Assainissement Durables",
     excerpt:
-      "Best practices for building durable, eco-friendly sanitation facilities that serve communities for generations.",
-    category: "Sustainability",
-    date: "December 20, 2025",
-    readTime: "7 min read",
+      "Meilleures pratiques pour construire des installations sanitaires durables et écologiques qui servent les communautés pendant des générations.",
+    category: "Durabilité",
+    date: "20 Décembre 2025",
+    readTime: "7 min de lecture",
   },
   {
     slug: "partnership-impact",
-    title: "The Power of Partnerships in Public Health",
+    title: "Le Pouvoir des Partenariats en Santé Publique",
     excerpt:
-      "How collaborative approaches between NGOs, governments, and communities amplify public health outcomes.",
-    category: "Community",
-    date: "December 15, 2025",
-    readTime: "4 min read",
+      "Comment les approches collaboratives entre ONG, gouvernements et communautés amplifient les résultats de santé publique.",
+    category: "Communauté",
+    date: "15 Décembre 2025",
+    readTime: "4 min de lecture",
   },
 ];
 
+const categoryMap: Record<string, string> = {
+  "Tous": "All",
+  "Durabilité": "Durabilité",
+  "Communauté": "Communauté",
+  "Innovation": "Innovation",
+  "Santé": "Santé",
+};
+
 export default function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("Tous");
 
   const filteredPosts = blogPosts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory =
-      selectedCategory === "All" || post.category === selectedCategory;
+      selectedCategory === "Tous" || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -93,11 +101,11 @@ export default function Blog() {
               Blog
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
-              Insights & <span className="gradient-text">Knowledge</span>
+              Actualités & <span className="gradient-text">Connaissances</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Stay informed with the latest insights on sustainable sanitation,
-              community development, and public health innovation.
+              Restez informé des dernières nouvelles sur l'assainissement durable,
+              le développement communautaire et l'innovation en santé publique.
             </p>
           </motion.div>
         </div>
@@ -110,7 +118,7 @@ export default function Blog() {
             <div className="relative w-full md:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search articles..."
+                placeholder="Rechercher des articles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -140,7 +148,7 @@ export default function Blog() {
         <div className="section-container">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-muted-foreground">No articles found.</p>
+              <p className="text-muted-foreground">Aucun article trouvé.</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -177,7 +185,7 @@ export default function Blog() {
                         {post.date}
                       </div>
                       <span className="text-sm text-primary font-medium flex items-center group-hover:underline">
-                        Read more
+                        Lire la suite
                         <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                       </span>
                     </div>
@@ -199,13 +207,13 @@ export default function Blog() {
             className="text-center max-w-xl mx-auto"
           >
             <SectionHeading
-              badge="Stay Updated"
-              title="Subscribe to Our Newsletter"
-              description="Get the latest insights delivered directly to your inbox."
+              badge="Restez Informé"
+              title="Abonnez-vous à Notre Newsletter"
+              description="Recevez les dernières actualités directement dans votre boîte mail."
             />
             <div className="mt-8 flex gap-3">
-              <Input placeholder="Enter your email" className="flex-1" />
-              <Button>Subscribe</Button>
+              <Input placeholder="Entrez votre email" className="flex-1" />
+              <Button>S'abonner</Button>
             </div>
           </motion.div>
         </div>

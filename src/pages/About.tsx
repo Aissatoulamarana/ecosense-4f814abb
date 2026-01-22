@@ -17,35 +17,35 @@ import { SectionHeading } from "@/components/ui/section-heading";
 const values = [
   {
     icon: Leaf,
-    title: "Sustainability",
+    title: "Durabilité",
     description:
-      "Environmental responsibility guides every decision we make, ensuring our solutions protect the planet for future generations.",
+      "La responsabilité environnementale guide chaque décision que nous prenons, garantissant que nos solutions protègent la planète pour les générations futures.",
   },
   {
     icon: Heart,
-    title: "Community First",
+    title: "Communauté d'Abord",
     description:
-      "We place communities at the center of our work, ensuring our solutions address real needs and create lasting value.",
+      "Nous plaçons les communautés au centre de notre travail, garantissant que nos solutions répondent à des besoins réels et créent une valeur durable.",
   },
   {
     icon: TrendingUp,
     title: "Innovation",
     description:
-      "We continuously seek new approaches and technologies to solve sanitation challenges more effectively.",
+      "Nous recherchons continuellement de nouvelles approches et technologies pour résoudre les défis d'assainissement plus efficacement.",
   },
   {
     icon: Award,
-    title: "Quality",
+    title: "Qualité",
     description:
-      "Excellence is non-negotiable. We maintain the highest standards in everything we deliver.",
+      "L'excellence est non négociable. Nous maintenons les normes les plus élevées dans tout ce que nous livrons.",
   },
 ];
 
 const impactStats = [
-  { value: "50+", label: "Communities Served", icon: Globe },
-  { value: "1000+", label: "Projects Completed", icon: Award },
-  { value: "5000+", label: "People Trained", icon: Users },
-  { value: "95%", label: "Client Satisfaction", icon: Heart },
+  { value: "50+", label: "Communautés Servies", icon: Globe },
+  { value: "1000+", label: "Projets Réalisés", icon: Award },
+  { value: "5000+", label: "Personnes Formées", icon: Users },
+  { value: "95%", label: "Satisfaction Client", icon: Heart },
 ];
 
 export default function About() {
@@ -63,12 +63,12 @@ export default function About() {
               À Propos
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
-              Building a <span className="gradient-text">Sustainable</span> Future
+              Construire un Avenir <span className="gradient-text">Durable</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Learn about our mission, vision, and the values that drive us to
-              create lasting positive change in sanitation and hygiene across
-              Guinea.
+              Découvrez notre mission, notre vision et les valeurs qui nous
+              poussent à créer un changement positif durable en matière
+              d'assainissement et d'hygiène à travers la Guinée.
             </p>
           </motion.div>
         </div>
@@ -127,9 +127,9 @@ export default function About() {
       <section className="py-24 bg-muted/30">
         <div className="section-container">
           <SectionHeading
-            badge="Our Values"
-            title="What We Stand For"
-            description="The principles that guide our work and shape our culture."
+            badge="Nos Valeurs"
+            title="Ce Que Nous Défendons"
+            description="Les principes qui guident notre travail et façonnent notre culture."
           />
 
           <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -161,9 +161,9 @@ export default function About() {
       <section className="py-24">
         <div className="section-container">
           <SectionHeading
-            badge="Our Impact"
-            title="Making a Difference"
-            description="Numbers that reflect our commitment to sustainable change."
+            badge="Notre Impact"
+            title="Faire la Différence"
+            description="Des chiffres qui reflètent notre engagement envers un changement durable."
           />
 
           <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -194,9 +194,9 @@ export default function About() {
         <div className="section-container">
           <div className="max-w-3xl mx-auto text-center">
             <SectionHeading
-              badge="Our Approach"
-              title="Integrated Solutions for Complex Challenges"
-              description="We take a holistic approach to sanitation, addressing infrastructure, behavior, and systems together."
+              badge="Notre Approche"
+              title="Des Solutions Intégrées pour des Défis Complexes"
+              description="Nous adoptons une approche holistique de l'assainissement, abordant ensemble l'infrastructure, le comportement et les systèmes."
             />
 
             <motion.div
@@ -206,16 +206,17 @@ export default function About() {
               className="mt-12 prose prose-lg mx-auto text-muted-foreground"
             >
               <p>
-                At Ecosense Solutions, we understand that sustainable sanitation
-                requires more than just building infrastructure. It demands an
-                integrated approach that combines physical construction with
-                community engagement, behavior change, and ongoing maintenance.
+                Chez Ecosense Solutions, nous comprenons que l'assainissement
+                durable nécessite plus que la simple construction
+                d'infrastructures. Cela demande une approche intégrée qui combine
+                la construction physique avec l'engagement communautaire, le
+                changement de comportement et la maintenance continue.
               </p>
               <p>
-                Our multidisciplinary team brings together expertise in
-                engineering, public health, community development, and
-                environmental science to deliver comprehensive solutions that
-                address the root causes of sanitation challenges.
+                Notre équipe multidisciplinaire réunit une expertise en
+                ingénierie, santé publique, développement communautaire et
+                sciences de l'environnement pour offrir des solutions complètes
+                qui s'attaquent aux causes profondes des défis d'assainissement.
               </p>
             </motion.div>
 
@@ -227,7 +228,7 @@ export default function About() {
               className="mt-12"
             >
               <Button asChild size="lg" className="shadow-glow">
-                <Link to="/partnership">Partner With Us</Link>
+                <Link to="/partnership">Devenez Partenaire</Link>
               </Button>
             </motion.div>
           </div>
