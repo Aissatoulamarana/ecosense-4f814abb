@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { name: "Home", href: "/" },
+  { name: "Accueil", href: "/" },
   { name: "Services", href: "/services" },
-  { name: "Partnership", href: "/partnership" },
+  { name: "Partenariat", href: "/partnership" },
   { name: "Blog", href: "/blog" },
-  { name: "About", href: "/about" },
+  { name: "À Propos", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -85,7 +85,7 @@ export function Header() {
           {/* CTA Button */}
           <div className="hidden lg:block">
             <Button asChild variant="default" className="shadow-glow">
-              <Link to="/contact">Request a Quote</Link>
+              <Link to="/contact">Demander un Devis</Link>
             </Button>
           </div>
 
@@ -130,7 +130,7 @@ export function Header() {
                 ))}
                 <div className="pt-4">
                   <Button asChild variant="default" className="w-full">
-                    <Link to="/contact">Request a Quote</Link>
+                    <Link to="/contact">Demander un Devis</Link>
                   </Button>
                 </div>
               </div>

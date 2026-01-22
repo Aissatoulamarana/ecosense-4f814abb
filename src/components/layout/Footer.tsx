@@ -3,20 +3,20 @@ import { Phone, MapPin, Clock, Mail } from "lucide-react";
 
 const footerLinks = {
   company: [
-    { name: "About Us", href: "/about" },
+    { name: "À Propos", href: "/about" },
     { name: "Services", href: "/services" },
-    { name: "Partnership", href: "/partnership" },
+    { name: "Partenariat", href: "/partnership" },
     { name: "Blog", href: "/blog" },
   ],
   services: [
-    { name: "Construction & Renovation", href: "/services#construction" },
-    { name: "Awareness & Training", href: "/services#training" },
-    { name: "Clean & Safe Premises", href: "/services#maintenance" },
-    { name: "Waste Management", href: "/services#waste" },
+    { name: "Solutions Technologiques", href: "/services#tech" },
+    { name: "Infrastructure & Rénovation", href: "/services#construction" },
+    { name: "Sensibilisation & Éducation", href: "/services#training" },
+    { name: "Gestion des Déchets", href: "/services#waste" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
+    { name: "Politique de Confidentialité", href: "/privacy" },
+    { name: "Conditions d'Utilisation", href: "/terms" },
   ],
 };
 
@@ -29,13 +29,13 @@ const contactInfo = [
   },
   {
     icon: MapPin,
-    label: "Address",
-    value: "Lambanyi, Conakry, Guinea",
+    label: "Adresse",
+    value: "Lambanyi, Conakry, Guinée",
     href: "#",
   },
   {
     icon: Clock,
-    label: "Hours",
+    label: "Heures",
     value: "09:00 – 17:00",
     href: "#",
   },
@@ -62,8 +62,9 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm mb-6">
-              Innovating for a cleaner, healthier future through sustainable 
-              sanitation and hygiene solutions for communities across Guinea.
+              Innover pour un avenir plus propre et plus sain grâce à des 
+              solutions d'assainissement et d'hygiène durables pour les 
+              communautés à travers la Guinée.
             </p>
             <div className="space-y-3">
               {contactInfo.map((item) => (
@@ -81,7 +82,7 @@ export function Footer() {
 
           {/* Links Columns */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Company</h4>
+            <h4 className="font-semibold text-foreground mb-4">Entreprise</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -120,7 +121,7 @@ export function Footer() {
                   to="/contact"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Get in Touch
+                  Nous Contacter
                 </Link>
               </li>
               <li>
@@ -139,7 +140,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Ecosense Solutions. All rights reserved.
+            © {new Date().getFullYear()} Ecosense Solutions. Tous droits réservés.
           </p>
           <div className="flex items-center gap-6">
             {footerLinks.legal.map((link) => (

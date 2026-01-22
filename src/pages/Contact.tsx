@@ -30,30 +30,30 @@ const contactInfo = [
     title: "WhatsApp",
     value: "+224 625 71 84 67",
     href: "https://wa.me/224625718467",
-    action: "Chat with us",
+    action: "Discuter avec nous",
   },
   {
     icon: MapPin,
-    title: "Address",
-    value: "Lambanyi, Conakry, Guinea",
+    title: "Adresse",
+    value: "Lambanyi, Conakry, Guinée",
     href: "#map",
-    action: "View on map",
+    action: "Voir sur la carte",
   },
   {
     icon: Clock,
-    title: "Working Hours",
-    value: "Monday – Friday: 09:00 – 17:00",
+    title: "Heures d'Ouverture",
+    value: "Lundi – Vendredi : 09:00 – 17:00",
     href: null,
     action: null,
   },
 ];
 
 const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(100),
-  email: z.string().email("Please enter a valid email").max(255),
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
+  email: z.string().email("Veuillez entrer une adresse email valide").max(255),
   phone: z.string().optional(),
-  inquiryType: z.string().min(1, "Please select an inquiry type"),
-  message: z.string().min(10, "Message must be at least 10 characters").max(1000),
+  inquiryType: z.string().min(1, "Veuillez sélectionner un type de demande"),
+  message: z.string().min(10, "Le message doit contenir au moins 10 caractères").max(1000),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -80,9 +80,9 @@ export default function Contact() {
       console.log("Form submitted:", data);
       setIsSubmitted(true);
       reset();
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      toast.success("Message envoyé avec succès ! Nous vous répondrons bientôt.");
     } catch (error) {
-      toast.error("Failed to send message. Please try again.");
+      toast.error("Échec de l'envoi du message. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }
@@ -102,11 +102,12 @@ export default function Contact() {
               Contact
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
-              Let's <span className="gradient-text">Connect</span>
+              Restons en <span className="gradient-text">Contact</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Have a question or want to discuss a project? We'd love to hear
-              from you. Reach out and let's start a conversation.
+              Vous avez une question ou souhaitez discuter d'un projet ? Nous
+              serions ravis de vous entendre. Contactez-nous et démarrons une
+              conversation.
             </p>
           </motion.div>
         </div>
@@ -163,7 +164,7 @@ export default function Contact() {
               viewport={{ once: true }}
             >
               <h2 className="text-2xl font-bold text-foreground mb-6">
-                Send Us a Message
+                Envoyez-nous un Message
               </h2>
 
               {isSubmitted ? (
@@ -172,14 +173,14 @@ export default function Contact() {
                     <CheckCircle className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold text-foreground mb-2">
-                    Message Sent!
+                    Message Envoyé !
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    Thank you for reaching out. We'll get back to you within 24
-                    hours.
+                    Merci de nous avoir contactés. Nous vous répondrons dans les
+                    24 heures.
                   </p>
                   <Button onClick={() => setIsSubmitted(false)}>
-                    Send Another Message
+                    Envoyer un Autre Message
                   </Button>
                 </div>
               ) : (
@@ -187,11 +188,11 @@ export default function Contact() {
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Name *
+                        Nom *
                       </label>
                       <Input
                         {...register("name")}
-                        placeholder="Your name"
+                        placeholder="Votre nom"
                         className={errors.name ? "border-destructive" : ""}
                       />
                       {errors.name && (
@@ -207,7 +208,7 @@ export default function Contact() {
                       <Input
                         {...register("email")}
                         type="email"
-                        placeholder="your@email.com"
+                        placeholder="votre@email.com"
                         className={errors.email ? "border-destructive" : ""}
                       />
                       {errors.email && (
@@ -221,7 +222,7 @@ export default function Contact() {
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Phone
+                        Téléphone
                       </label>
                       <Input
                         {...register("phone")}
@@ -230,7 +231,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        I would like to... *
+                        Je souhaite... *
                       </label>
                       <Select
                         onValueChange={(value) => setValue("inquiryType", value)}
@@ -240,17 +241,17 @@ export default function Contact() {
                             errors.inquiryType ? "border-destructive" : ""
                           }
                         >
-                          <SelectValue placeholder="Select an option" />
+                          <SelectValue placeholder="Sélectionner une option" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="quote">Request a quote</SelectItem>
+                          <SelectItem value="quote">Demander un devis</SelectItem>
                           <SelectItem value="inquiry">
-                            General inquiry
+                            Renseignement général
                           </SelectItem>
                           <SelectItem value="partnership">
-                            Discuss partnership
+                            Discuter d'un partenariat
                           </SelectItem>
-                          <SelectItem value="support">Get support</SelectItem>
+                          <SelectItem value="support">Obtenir de l'aide</SelectItem>
                         </SelectContent>
                       </Select>
                       {errors.inquiryType && (
@@ -267,7 +268,7 @@ export default function Contact() {
                     </label>
                     <Textarea
                       {...register("message")}
-                      placeholder="Tell us about your project or question..."
+                      placeholder="Parlez-nous de votre projet ou question..."
                       rows={5}
                       className={errors.message ? "border-destructive" : ""}
                     />
@@ -285,10 +286,10 @@ export default function Contact() {
                     className="w-full sm:w-auto shadow-glow"
                   >
                     {isSubmitting ? (
-                      "Sending..."
+                      "Envoi en cours..."
                     ) : (
                       <>
-                        Send Message
+                        Envoyer le Message
                         <Send className="w-4 h-4 ml-2" />
                       </>
                     )}
@@ -305,7 +306,7 @@ export default function Contact() {
               viewport={{ once: true }}
             >
               <h2 className="text-2xl font-bold text-foreground mb-6">
-                Find Us
+                Nous Trouver
               </h2>
               <div className="glass-card overflow-hidden rounded-2xl h-[400px] lg:h-full min-h-[400px]">
                 <iframe
@@ -316,7 +317,7 @@ export default function Contact() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Ecosense Solutions Location"
+                  title="Emplacement Ecosense Solutions"
                 />
               </div>
             </motion.div>
@@ -337,11 +338,11 @@ export default function Contact() {
               <MessageCircle className="w-8 h-8 text-primary" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">
-              Prefer to Chat?
+              Préférez-vous Discuter ?
             </h2>
             <p className="text-muted-foreground mb-6">
-              Connect with us instantly on WhatsApp for quick responses and
-              real-time assistance.
+              Connectez-vous avec nous instantanément sur WhatsApp pour des
+              réponses rapides et une assistance en temps réel.
             </p>
             <Button
               asChild
@@ -354,7 +355,7 @@ export default function Contact() {
                 rel="noopener noreferrer"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
-                Chat on WhatsApp
+                Discuter sur WhatsApp
               </a>
             </Button>
           </motion.div>
