@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Phone, MapPin, Clock, Mail } from "lucide-react";
+import { Phone, MapPin, Clock, Mail, Globe } from "lucide-react";
+import logoEcosense from "@/assets/logo-ecosense.jpg";
 
 const footerLinks = {
   company: [
@@ -49,17 +50,11 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 group mb-4">
-              <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">E</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-foreground text-lg leading-tight">
-                  Ecosense
-                </span>
-                <span className="text-xs text-muted-foreground leading-tight">
-                  Solutions
-                </span>
-              </div>
+              <img
+                src={logoEcosense}
+                alt="Ecosense Solutions"
+                className="h-10 w-auto"
+              />
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm mb-6">
               Innover pour un avenir plus propre et plus sain grâce à des 
@@ -126,11 +121,22 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:contact@ecosense.gn"
+                  href="mailto:contact@ecosensesolutions.co"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
                 >
                   <Mail className="w-4 h-4" />
-                  contact@ecosense.gn
+                  contact@ecosensesolutions.co
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.ecosensesolutions.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                >
+                  <Globe className="w-4 h-4" />
+                  www.ecosensesolutions.co
                 </a>
               </li>
             </ul>

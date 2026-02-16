@@ -50,9 +50,9 @@ const services = [
 ];
 
 const stats = [
-  { value: "50+", label: "Communautés Servies" },
-  { value: "1000+", label: "Projets Réalisés" },
-  { value: "95%", label: "Satisfaction Client" },
+  { value: "+44", label: "Villages" },
+  { value: "+50", label: "Partenaires" },
+  { value: "65%", label: "La Guinée" },
 ];
 
 const values = [
@@ -151,7 +151,7 @@ const Index = () => {
               Solutions d'Assainissement Durables
             </motion.span>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
               Innover pour un Avenir{" "}
               <span className="gradient-text">Plus Propre et Plus Sain</span>
             </h1>

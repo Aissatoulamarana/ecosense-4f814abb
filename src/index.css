@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -21,67 +21,67 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 20% 12%;
 
-    /* Primary: Vibrant Eco Green */
-    --primary: 152 55% 38%;
+    /* Primary: Deep Blue #00456b */
+    --primary: 201 100% 21%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Soft sage */
-    --secondary: 145 15% 94%;
-    --secondary-foreground: 152 40% 25%;
+    /* Secondary: Light blue-gray */
+    --secondary: 200 15% 94%;
+    --secondary-foreground: 201 80% 25%;
 
-    /* Muted: Light gray-green */
-    --muted: 150 10% 96%;
+    /* Muted: Light gray */
+    --muted: 210 10% 96%;
     --muted-foreground: 210 12% 45%;
 
-    /* Accent: Serene teal-blue */
-    --accent: 185 50% 45%;
+    /* Accent: Brand Green (logo swoosh) */
+    --accent: 152 50% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 10% 90%;
-    --input: 150 10% 90%;
-    --ring: 152 55% 38%;
+    --border: 210 10% 90%;
+    --input: 210 10% 90%;
+    --ring: 201 100% 21%;
 
     --radius: 0.75rem;
 
     /* Custom Ecosense tokens */
-    --eco-green-50: 145 60% 96%;
-    --eco-green-100: 145 55% 90%;
-    --eco-green-200: 148 52% 80%;
-    --eco-green-300: 150 50% 65%;
-    --eco-green-400: 152 52% 50%;
-    --eco-green-500: 152 55% 38%;
-    --eco-green-600: 153 58% 30%;
-    --eco-green-700: 154 60% 22%;
-    --eco-green-800: 155 62% 15%;
-    --eco-green-900: 156 65% 10%;
+    --eco-green-50: 152 50% 96%;
+    --eco-green-100: 152 48% 90%;
+    --eco-green-200: 152 46% 80%;
+    --eco-green-300: 152 44% 65%;
+    --eco-green-400: 152 48% 55%;
+    --eco-green-500: 152 50% 48%;
+    --eco-green-600: 152 52% 38%;
+    --eco-green-700: 152 55% 28%;
+    --eco-green-800: 152 58% 20%;
+    --eco-green-900: 152 60% 14%;
 
-    --eco-teal-50: 180 50% 96%;
-    --eco-teal-100: 182 48% 88%;
-    --eco-teal-200: 183 46% 75%;
-    --eco-teal-300: 184 44% 60%;
-    --eco-teal-400: 185 50% 45%;
-    --eco-teal-500: 186 55% 35%;
+    --eco-teal-50: 195 50% 96%;
+    --eco-teal-100: 195 48% 88%;
+    --eco-teal-200: 195 46% 75%;
+    --eco-teal-300: 195 44% 60%;
+    --eco-teal-400: 195 50% 45%;
+    --eco-teal-500: 195 55% 35%;
 
-    --eco-blue-50: 200 60% 96%;
-    --eco-blue-100: 202 55% 90%;
-    --eco-blue-400: 205 70% 55%;
-    --eco-blue-500: 207 75% 45%;
+    --eco-blue-50: 201 60% 96%;
+    --eco-blue-100: 201 55% 90%;
+    --eco-blue-400: 201 80% 35%;
+    --eco-blue-500: 201 100% 21%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(152 55% 38%), hsl(185 50% 45%));
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 99%) 0%, hsl(145 60% 96%) 50%, hsl(180 50% 96%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(201 100% 21%), hsl(152 50% 48%));
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 99%) 0%, hsl(201 60% 96%) 50%, hsl(200 50% 96%) 100%);
     --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.8) 0%, hsla(0, 0%, 100%, 0.4) 100%);
-    --gradient-card: linear-gradient(145deg, hsla(0, 0%, 100%, 0.9) 0%, hsla(145, 60%, 98%, 0.6) 100%);
+    --gradient-card: linear-gradient(145deg, hsla(0, 0%, 100%, 0.9) 0%, hsla(201, 60%, 98%, 0.6) 100%);
 
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsla(210, 20%, 12%, 0.03);
     --shadow-md: 0 4px 6px -1px hsla(210, 20%, 12%, 0.05), 0 2px 4px -2px hsla(210, 20%, 12%, 0.03);
     --shadow-lg: 0 10px 15px -3px hsla(210, 20%, 12%, 0.08), 0 4px 6px -4px hsla(210, 20%, 12%, 0.04);
     --shadow-xl: 0 20px 25px -5px hsla(210, 20%, 12%, 0.08), 0 8px 10px -6px hsla(210, 20%, 12%, 0.04);
-    --shadow-glow: 0 0 40px -10px hsl(152 55% 38% / 0.3);
+    --shadow-glow: 0 0 40px -10px hsl(201 100% 21% / 0.3);
     --shadow-glass: 0 8px 32px 0 hsla(210, 20%, 12%, 0.06);
 
     /* Glassmorphism */
@@ -109,16 +109,16 @@
     --popover: 210 18% 10%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 152 50% 50%;
-    --primary-foreground: 210 20% 8%;
+    --primary: 201 80% 35%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 15% 15%;
-    --secondary-foreground: 152 40% 70%;
+    --secondary-foreground: 201 60% 70%;
 
     --muted: 210 15% 15%;
     --muted-foreground: 210 12% 60%;
 
-    --accent: 185 45% 55%;
+    --accent: 152 45% 55%;
     --accent-foreground: 210 20% 8%;
 
     --destructive: 0 62.8% 30.6%;
@@ -126,7 +126,7 @@
 
     --border: 210 15% 18%;
     --input: 210 15% 18%;
-    --ring: 152 50% 50%;
+    --ring: 201 80% 35%;
 
     --glass-bg: hsla(210, 20%, 10%, 0.7);
     --glass-border: hsla(210, 20%, 20%, 0.4);
