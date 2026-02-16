@@ -62,7 +62,7 @@ export default function About() {
             <span className="inline-block px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
               À Propos
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold text-foreground tracking-tight mb-6">
               Construire un Avenir <span className="gradient-text">Durable</span>
             </h1>
             <p className="text-lg text-muted-foreground">

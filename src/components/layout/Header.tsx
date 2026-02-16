@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import logoEcosense from "@/assets/logo-ecosense.jpg";
 
 const navLinks = [
   { name: "Accueil", href: "/" },
@@ -44,17 +45,11 @@ export function Header() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow">
-              <span className="text-primary-foreground font-bold text-lg">E</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
-                Ecosense
-              </span>
-              <span className="text-xs text-muted-foreground leading-tight">
-                Solutions
-              </span>
-            </div>
+            <img
+              src={logoEcosense}
+              alt="Ecosense Solutions"
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
