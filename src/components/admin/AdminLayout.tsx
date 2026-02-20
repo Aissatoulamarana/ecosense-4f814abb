@@ -5,14 +5,14 @@ import {
   FileText,
   MessageSquare,
   Users,
-  Settings,
+  ExternalLink,
   LogOut,
   Menu,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import logoEcosense from "@/assets/logo-ecosense.jpg";
 
 const navItems = [
@@ -38,83 +38,105 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-card/95 backdrop-blur border-r border-border/60 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto shadow-glass",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-border flex items-center justify-between">
-            <Link to="/admin" className="flex items-center gap-2">
-              <img src={logoEcosense} alt="Ecosense" className="h-8" />
+          {/* Logo */}
+          <div className="p-5 border-b border-border/60 flex items-center justify-between">
+            <Link to="/admin" className="flex items-center gap-3">
+              <img src={logoEcosense} alt="Ecosense" className="h-9 rounded-lg" />
+              <span className="text-sm font-heading font-semibold text-foreground">Admin</span>
             </Link>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
-              <X className="w-5 h-5" />
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1.5 rounded-lg hover:bg-muted/60 transition-colors"
+            >
+              <X className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
 
+          {/* Nav */}
           <nav className="flex-1 p-4 space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                  location.pathname === item.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const active = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={cn(
+                    "relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                    active
+                      ? "bg-primary/10 text-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  {active && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-primary rounded-r-full" />
+                  )}
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
-          <div className="p-4 border-t border-border space-y-2">
+          {/* Footer */}
+          <div className="p-4 border-t border-border/60 space-y-1">
             <Link
               to="/"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             >
-              <Settings className="w-5 h-5" />
+              <ExternalLink className="w-4 h-4" />
               Voir le site
             </Link>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4" />
               Déconnexion
             </button>
           </div>
         </div>
       </aside>
 
-      {/* Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {/* Overlay mobile */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-foreground/30 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
+        {/* Header */}
+        <header className="sticky top-0 z-30 bg-background/90 backdrop-blur border-b border-border/60 px-6 py-3.5 flex items-center justify-between">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 rounded-lg hover:bg-muted/50"
+            className="lg:hidden p-2 rounded-lg hover:bg-muted/50 transition-colors"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-5 h-5 text-muted-foreground" />
           </button>
           <div className="flex items-center gap-3 ml-auto">
-            <span className="text-sm text-muted-foreground">
+            <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+              Admin
+            </span>
+            <span className="text-sm text-muted-foreground hidden sm:block">
               {user?.email}
             </span>
           </div>
         </header>
 
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );
