@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, MessageSquare, Users, Eye } from "lucide-react";
+import { FileText, MessageSquare, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Stats {
   posts: number;
@@ -32,28 +33,59 @@ export default function AdminDashboard() {
   }, []);
 
   const cards = [
-    { label: "Articles", value: stats.posts, icon: FileText, color: "text-primary" },
-    { label: "Messages", value: stats.messages, icon: MessageSquare, color: "text-accent-foreground", sub: `${stats.unreadMessages} non lus` },
-    { label: "Utilisateurs", value: stats.users, icon: Users, color: "text-primary" },
+    {
+      label: "Articles",
+      value: stats.posts,
+      icon: FileText,
+      description: "Articles publiés et brouillons",
+      accent: "bg-primary/10 text-primary border-primary/20",
+    },
+    {
+      label: "Messages",
+      value: stats.messages,
+      icon: MessageSquare,
+      description: `${stats.unreadMessages} non lu${stats.unreadMessages > 1 ? "s" : ""}`,
+      accent: "bg-accent/10 text-accent border-accent/20",
+    },
+    {
+      label: "Utilisateurs",
+      value: stats.users,
+      icon: Users,
+      description: "Comptes enregistrés",
+      accent: "bg-primary/10 text-primary border-primary/20",
+    },
   ];
 
   return (
     <AdminLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-heading font-bold text-foreground">Tableau de bord</h1>
-        <p className="text-muted-foreground text-sm mt-1">Vue d'ensemble de votre site</p>
+      <div className="mb-10">
+        <span className="inline-block px-4 py-1.5 mb-4 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+          Vue d'ensemble
+        </span>
+        <h1 className="text-3xl font-heading font-bold text-foreground">
+          Tableau de <span className="gradient-text">bord</span>
+        </h1>
+        <p className="text-muted-foreground text-sm mt-2">Bienvenue dans l'espace d'administration Ecosense</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card) => (
-          <div key={card.label} className="bg-card border border-border rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-muted-foreground">{card.label}</span>
-              <card.icon className={`w-5 h-5 ${card.color}`} />
+        {cards.map((card, i) => (
+          <motion.div
+            key={card.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="premium-card p-6"
+          >
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-sm font-medium text-muted-foreground">{card.label}</span>
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center border ${card.accent}`}>
+                <card.icon className="w-4 h-4" />
+              </div>
             </div>
-            <p className="text-3xl font-bold text-foreground">{card.value}</p>
-            {card.sub && <p className="text-sm text-muted-foreground mt-1">{card.sub}</p>}
-          </div>
+            <p className="text-4xl font-heading font-bold gradient-text mb-1">{card.value}</p>
+            <p className="text-xs text-muted-foreground mt-1">{card.description}</p>
+          </motion.div>
         ))}
       </div>
     </AdminLayout>

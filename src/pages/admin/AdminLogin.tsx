@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Lock, Mail } from "lucide-react";
+import { motion } from "framer-motion";
 import logoEcosense from "@/assets/logo-ecosense.jpg";
 
 export default function AdminLogin() {
@@ -28,23 +29,52 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center hero-gradient p-4 relative overflow-hidden">
+      {/* Floating blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-72 h-72 rounded-full bg-primary/5 blur-3xl"
+            animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
+            transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
+            style={{ left: `${10 + i * 22}%`, top: `${15 + (i % 2) * 40}%` }}
+          />
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 w-full max-w-md"
+      >
         <div className="text-center mb-8">
-          <img src={logoEcosense} alt="Ecosense" className="h-12 mx-auto mb-4" />
-          <h1 className="text-2xl font-heading font-bold text-foreground">
+          <motion.img
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            src={logoEcosense}
+            alt="Ecosense"
+            className="h-14 mx-auto mb-5 rounded-xl shadow-md"
+          />
+          <h1 className="text-3xl font-heading font-bold text-foreground">
             Administration
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-2">
             Connectez-vous pour accéder au panneau d'administration
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="glass-card p-8 space-y-6">
           {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg border border-destructive/20"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           <div>
@@ -77,11 +107,11 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full shadow-glow" disabled={loading}>
             {loading ? "Connexion..." : "Se connecter"}
           </Button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
