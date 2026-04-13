@@ -1,91 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Search, ArrowRight, Calendar } from "lucide-react";
+import { Search, ArrowRight, Calendar, Image } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { supabase } from "@/integrations/supabase/client";
 
-const categories = ["Tous", "Durabilité", "Communauté", "Innovation", "Santé"];
-
-const blogPosts = [
-  {
-    slug: "future-sustainable-sanitation",
-    title: "L'Avenir de l'Assainissement Durable en Afrique de l'Ouest",
-    excerpt:
-      "Explorer des approches innovantes pour l'hygiène communautaire et le développement d'infrastructures qui façonnent l'avenir de la santé publique dans la région.",
-    category: "Innovation",
-    date: "15 Janvier 2026",
-    readTime: "5 min de lecture",
-  },
-  {
-    slug: "community-engagement",
-    title: "Engagement Communautaire : Clé du Changement Durable",
-    excerpt:
-      "Comment l'implication locale et l'appropriation transforment les résultats en matière d'assainissement et créent un changement comportemental durable.",
-    category: "Communauté",
-    date: "10 Janvier 2026",
-    readTime: "4 min de lecture",
-  },
-  {
-    slug: "waste-to-value",
-    title: "Déchets en Valeur : Transformer les Défis en Opportunités",
-    excerpt:
-      "Pratiques innovantes de gestion des déchets qui créent de la valeur économique tout en protégeant l'environnement.",
-    category: "Durabilité",
-    date: "5 Janvier 2026",
-    readTime: "6 min de lecture",
-  },
-  {
-    slug: "hygiene-education-schools",
-    title: "L'Éducation à l'Hygiène dans les Écoles : Construire des Habitudes Saines Tôt",
-    excerpt:
-      "L'impact des programmes complets d'éducation à l'hygiène sur la santé des élèves et le bien-être communautaire.",
-    category: "Santé",
-    date: "28 Décembre 2025",
-    readTime: "5 min de lecture",
-  },
-  {
-    slug: "sustainable-infrastructure",
-    title: "Concevoir des Infrastructures d'Assainissement Durables",
-    excerpt:
-      "Meilleures pratiques pour construire des installations sanitaires durables et écologiques qui servent les communautés pendant des générations.",
-    category: "Durabilité",
-    date: "20 Décembre 2025",
-    readTime: "7 min de lecture",
-  },
-  {
-    slug: "partnership-impact",
-    title: "Le Pouvoir des Partenariats en Santé Publique",
-    excerpt:
-      "Comment les approches collaboratives entre ONG, gouvernements et communautés amplifient les résultats de santé publique.",
-    category: "Communauté",
-    date: "15 Décembre 2025",
-    readTime: "4 min de lecture",
-  },
-];
-
-const categoryMap: Record<string, string> = {
-  "Tous": "All",
-  "Durabilité": "Durabilité",
-  "Communauté": "Communauté",
-  "Innovation": "Innovation",
-  "Santé": "Santé",
-};
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  cover_image_url: string | null;
+  status: string;
+  published_at: string | null;
+  created_at: string;
+}
 
 export default function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Tous");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredPosts = blogPosts.filter((post) => {
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("status", "published")
+        .order("published_at", { ascending: false });
+      setPosts(data ?? []);
+      setLoading(false);
+    };
+    fetchPosts();
+  }, []);
+
+  const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "Tous" || post.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+      (post.excerpt ?? "").toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
   });
+
+  const formatDate = (post: BlogPost) => {
+    const date = post.published_at ?? post.created_at;
+    return new Date(date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  };
+
+  const estimateReadTime = (content: string | null) => {
+    if (!content) return "2 min de lecture";
+    return `${Math.max(1, Math.ceil(content.split(" ").length / 200))} min de lecture`;
+  };
 
   return (
     <Layout>
@@ -111,34 +79,17 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Filters */}
+      {/* Search */}
       <section className="py-8 border-b border-border">
         <div className="section-container">
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher des articles..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 text-sm rounded-full transition-colors ${
-                    selectedCategory === category
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher des articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </div>
       </section>
@@ -146,7 +97,11 @@ export default function Blog() {
       {/* Posts Grid */}
       <section className="py-16">
         <div className="section-container">
-          {filteredPosts.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-16">
+              <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            </div>
+          ) : filteredPosts.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-muted-foreground">Aucun article trouvé.</p>
             </div>
@@ -154,7 +109,7 @@ export default function Blog() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPosts.map((post, index) => (
                 <motion.article
-                  key={post.slug}
+                  key={post.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -163,31 +118,46 @@ export default function Blog() {
                 >
                   <Link
                     to={`/blog/${post.slug}`}
-                    className="block h-full p-6 rounded-2xl bg-card border border-border/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                    className="block h-full rounded-2xl bg-card border border-border/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                   >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
-                        {post.category}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {post.readTime}
-                      </span>
-                    </div>
-                    <h2 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h2>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        {post.date}
+                    {/* Cover image */}
+                    {post.cover_image_url ? (
+                      <div className="aspect-video w-full overflow-hidden">
+                        <img
+                          src={post.cover_image_url}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
                       </div>
-                      <span className="text-sm text-primary font-medium flex items-center group-hover:underline">
-                        Lire la suite
-                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                      </span>
+                    ) : (
+                      <div className="aspect-video w-full bg-muted flex items-center justify-center">
+                        <Image className="w-10 h-10 text-muted-foreground opacity-30" />
+                      </div>
+                    )}
+
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-xs text-muted-foreground">
+                          {estimateReadTime(post.content)}
+                        </span>
+                      </div>
+                      <h2 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                        {post.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Calendar className="w-4 h-4" />
+                          {formatDate(post)}
+                        </div>
+                        <span className="text-sm text-primary font-medium flex items-center group-hover:underline">
+                          Lire la suite
+                          <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </motion.article>

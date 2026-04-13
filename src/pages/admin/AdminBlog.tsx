@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, X, FileText } from "lucide-react";
+import { Plus, Edit, Trash2, X, FileText, Upload, Image } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -16,6 +16,7 @@ interface BlogPost {
   content: string | null;
   excerpt: string | null;
   status: string;
+  cover_image_url: string | null;
   published_at: string | null;
   created_at: string;
 }
@@ -27,6 +28,9 @@ export default function AdminBlog() {
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [form, setForm] = useState({ title: "", slug: "", content: "", excerpt: "", status: "draft" });
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const fetchPosts = async () => {
     const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
@@ -40,40 +44,67 @@ export default function AdminBlog() {
     setIsNew(true);
     setEditing(null);
     setForm({ title: "", slug: "", content: "", excerpt: "", status: "draft" });
+    setCoverFile(null);
+    setCoverPreview(null);
   };
 
   const openEdit = (post: BlogPost) => {
     setIsNew(false);
     setEditing(post);
     setForm({ title: post.title, slug: post.slug, content: post.content ?? "", excerpt: post.excerpt ?? "", status: post.status });
+    setCoverFile(null);
+    setCoverPreview(post.cover_image_url ?? null);
   };
 
-  const closeForm = () => { setEditing(null); setIsNew(false); };
+  const closeForm = () => { setEditing(null); setIsNew(false); setCoverFile(null); setCoverPreview(null); };
 
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
+  };
+
+  const uploadCover = async (slug: string): Promise<string | null> => {
+    if (!coverFile) return coverPreview; // keep existing if no new file
+    const ext = coverFile.name.split(".").pop();
+    const path = `${slug}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("blog-covers").upload(path, coverFile, { upsert: true });
+    if (error) { toast.error("Erreur upload image"); return null; }
+    const { data } = supabase.storage.from("blog-covers").getPublicUrl(path);
+    return data.publicUrl;
+  };
+
   const handleSave = async () => {
     const slug = form.slug || generateSlug(form.title);
+    setUploading(true);
+
+    const imageUrl = await uploadCover(slug);
+
     const payload = {
       title: form.title,
       slug,
       content: form.content,
       excerpt: form.excerpt,
       status: form.status,
+      cover_image_url: imageUrl,
       published_at: form.status === "published" ? new Date().toISOString() : null,
       author_id: user?.id,
     };
 
     if (isNew) {
       const { error } = await supabase.from("blog_posts").insert(payload);
-      if (error) { toast.error("Erreur lors de la création"); return; }
+      if (error) { toast.error("Erreur lors de la création"); setUploading(false); return; }
       toast.success("Article créé");
     } else if (editing) {
       const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
-      if (error) { toast.error("Erreur lors de la mise à jour"); return; }
+      if (error) { toast.error("Erreur lors de la mise à jour"); setUploading(false); return; }
       toast.success("Article mis à jour");
     }
+    setUploading(false);
     closeForm();
     fetchPosts();
   };
@@ -121,6 +152,34 @@ export default function AdminBlog() {
           <Input placeholder="Titre" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })} />
           <Input placeholder="Slug (URL)" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
           <Input placeholder="Extrait (résumé court)" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
+
+          {/* Cover image upload */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Image de couverture</label>
+            <div className="flex items-start gap-4">
+              {coverPreview ? (
+                <div className="relative w-40 h-24 rounded-lg overflow-hidden border border-border">
+                  <img src={coverPreview} alt="Aperçu" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => { setCoverFile(null); setCoverPreview(null); }}
+                    className="absolute top-1 right-1 p-1 bg-background/80 rounded-full hover:bg-destructive/20 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-40 h-24 rounded-lg border-2 border-dashed border-border flex items-center justify-center text-muted-foreground">
+                  <Image className="w-6 h-6 opacity-40" />
+                </div>
+              )}
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-background hover:bg-muted/60 transition-colors text-foreground">
+                <Upload className="w-4 h-4" />
+                Choisir une image
+                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+              </label>
+            </div>
+          </div>
+
           <Textarea placeholder="Contenu de l'article..." value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={8} />
           <div className="flex gap-4 items-center">
             <select
@@ -131,7 +190,9 @@ export default function AdminBlog() {
               <option value="draft">Brouillon</option>
               <option value="published">Publié</option>
             </select>
-            <Button onClick={handleSave} className="shadow-glow">Enregistrer</Button>
+            <Button onClick={handleSave} disabled={uploading} className="shadow-glow">
+              {uploading ? "Enregistrement..." : "Enregistrer"}
+            </Button>
           </div>
         </motion.div>
       )}
@@ -140,7 +201,7 @@ export default function AdminBlog() {
         <table className="w-full">
           <thead className="bg-muted/40 border-b border-border/60">
             <tr>
-              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Titre</th>
+              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Article</th>
               <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Statut</th>
               <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Date</th>
               <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</th>
@@ -155,7 +216,18 @@ export default function AdminBlog() {
                 transition={{ delay: i * 0.04 }}
                 className="border-t border-border/60 hover:bg-muted/20 transition-colors"
               >
-                <td className="p-4 text-sm font-medium text-foreground">{post.title}</td>
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    {post.cover_image_url ? (
+                      <img src={post.cover_image_url} alt="" className="w-12 h-8 rounded object-cover border border-border/60" />
+                    ) : (
+                      <div className="w-12 h-8 rounded bg-muted flex items-center justify-center">
+                        <Image className="w-4 h-4 text-muted-foreground opacity-40" />
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-foreground">{post.title}</span>
+                  </div>
+                </td>
                 <td className="p-4 hidden md:table-cell">
                   <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${
                     post.status === "published"
