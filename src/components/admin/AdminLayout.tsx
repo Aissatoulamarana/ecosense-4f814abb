@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   X,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -20,6 +21,7 @@ const navItems = [
   { name: "Articles", href: "/admin/blog", icon: FileText },
   { name: "Messages", href: "/admin/messages", icon: MessageSquare },
   { name: "Utilisateurs", href: "/admin/users", icon: Users },
+  { name: "Reglages", href: "/admin/settings", icon: Settings },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -39,15 +41,21 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-64 bg-card/95 backdrop-blur border-r border-border/60 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto shadow-glass",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-5 border-b border-border/60 flex items-center justify-between">
             <Link to="/admin" className="flex items-center gap-3">
-              <img src={logoEcosense} alt="Ecosense" className="h-9 rounded-lg" />
-              <span className="text-sm font-heading font-semibold text-foreground">Admin</span>
+              <img
+                src={logoEcosense}
+                alt="Ecosense"
+                className="h-9 rounded-lg"
+              />
+              <span className="text-sm font-heading font-semibold text-foreground">
+                Admin
+              </span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -70,7 +78,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                     "relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                     active
                       ? "bg-primary/10 text-primary shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
                   )}
                 >
                   {active && (

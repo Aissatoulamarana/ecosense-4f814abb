@@ -20,28 +20,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const checkAdmin = async (userId: string) => {
+    console.log("🔍 checkAdmin for userId:", userId);
     const { data } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .eq("role", "admin")
       .maybeSingle();
+    console.log("📋 checkAdmin result:", data, "error:");
     setIsAdmin(!!data);
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await checkAdmin(session.user.id);
-        } else {
-          setIsAdmin(false);
-        }
-        setLoading(false);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log("🔄 onAuthStateChange:", _event, session?.user?.email);
+      setLoading(true);
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        console.log("👤 User found, checking admin...");
+        await checkAdmin(session.user.id);
+        console.log("✅ checkAdmin done");
+      } else {
+        setIsAdmin(false);
       }
-    );
+      setLoading(false);
+      console.log("🏁 loading set to false");
+    });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
@@ -56,7 +63,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     return { error: error as Error | null };
   };
 
@@ -66,7 +76,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user, session, isAdmin, loading, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

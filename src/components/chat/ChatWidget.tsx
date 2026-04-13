@@ -43,7 +43,7 @@ export function ChatWidget() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY}`,
         },
         body: JSON.stringify({ messages: newMessages }),
       });
@@ -75,7 +75,7 @@ export function ChatWidget() {
       while (!streamDone) {
         const { done, value } = await reader.read();
         if (done) break;
-        
+
         textBuffer += decoder.decode(value, { stream: true });
 
         let newlineIndex: number;
@@ -95,7 +95,9 @@ export function ChatWidget() {
 
           try {
             const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            const content = parsed.choices?.[0]?.delta?.content as
+              | string
+              | undefined;
             if (content) {
               assistantContent += content;
               setMessages((prev) => {
@@ -137,7 +139,7 @@ export function ChatWidget() {
           "fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl",
           "bg-gradient-to-br from-primary to-accent text-primary-foreground",
           "flex items-center justify-center transition-all duration-300",
-          "hover:shadow-glow hover:scale-105"
+          "hover:shadow-glow hover:scale-105",
         )}
         whileTap={{ scale: 0.95 }}
         aria-label={isOpen ? "Close chat" : "Open chat"}
@@ -178,7 +180,7 @@ export function ChatWidget() {
             className={cn(
               "fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)]",
               "glass-card rounded-2xl overflow-hidden shadow-2xl",
-              "flex flex-col"
+              "flex flex-col",
             )}
             style={{ height: "min(600px, calc(100vh - 150px))" }}
           >
@@ -186,10 +188,14 @@ export function ChatWidget() {
             <div className="p-4 border-b border-border/50 bg-gradient-to-r from-primary/5 to-accent/5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-sm">E</span>
+                  <span className="text-primary-foreground font-bold text-sm">
+                    E
+                  </span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Ecosense Assistant</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Ecosense Assistant
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     Ask us anything about our services
                   </p>
@@ -213,7 +219,7 @@ export function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(
                     "flex",
-                    message.role === "user" ? "justify-end" : "justify-start"
+                    message.role === "user" ? "justify-end" : "justify-start",
                   )}
                 >
                   <div
@@ -221,7 +227,7 @@ export function ChatWidget() {
                       "chat-bubble max-w-[85%] text-sm",
                       message.role === "user"
                         ? "chat-bubble-user"
-                        : "chat-bubble-assistant"
+                        : "chat-bubble-assistant",
                     )}
                   >
                     {message.content || (
@@ -249,7 +255,7 @@ export function ChatWidget() {
                     "flex-1 px-4 py-3 rounded-xl text-sm",
                     "bg-muted/50 border border-border/50",
                     "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50",
-                    "placeholder:text-muted-foreground/60"
+                    "placeholder:text-muted-foreground/60",
                   )}
                   disabled={isLoading}
                 />

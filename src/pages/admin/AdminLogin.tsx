@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,20 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("👁 useEffect auth state:", {
+      authLoading,
+      user: user?.email,
+      isAdmin,
+    });
+    if (!authLoading && user && isAdmin) {
+      console.log("🚀 Navigating to /admin");
+      navigate("/admin");
+    }
+  }, [user, isAdmin, authLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +34,6 @@ export default function AdminLogin() {
     const { error } = await signIn(email, password);
     if (error) {
       setError("Email ou mot de passe incorrect.");
-    } else {
-      navigate("/admin");
     }
     setLoading(false);
   };
@@ -37,7 +47,12 @@ export default function AdminLogin() {
             key={i}
             className="absolute w-72 h-72 rounded-full bg-primary/5 blur-3xl"
             animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
-            transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.8,
+            }}
             style={{ left: `${10 + i * 22}%`, top: `${15 + (i % 2) * 40}%` }}
           />
         ))}
@@ -78,7 +93,9 @@ export default function AdminLogin() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Email</label>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Email
+            </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -93,7 +110,9 @@ export default function AdminLogin() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Mot de passe</label>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Mot de passe
+            </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -107,7 +126,11 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full shadow-glow" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full shadow-glow"
+            disabled={loading}
+          >
             {loading ? "Connexion..." : "Se connecter"}
           </Button>
         </form>

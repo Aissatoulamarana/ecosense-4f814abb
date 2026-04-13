@@ -160,3 +160,63 @@ CREATE POLICY "Anyone can view page content" ON public.page_content FOR SELECT U
 CREATE POLICY "Admin can insert page content" ON public.page_content FOR INSERT WITH CHECK (public.is_admin());
 CREATE POLICY "Admin can update page content" ON public.page_content FOR UPDATE USING (public.is_admin());
 CREATE POLICY "Admin can delete page content" ON public.page_content FOR DELETE USING (public.is_admin());
+
+-- Migration: site_settings table
+-- Run this in Supabase SQL Editor
+
+CREATE TABLE public.site_settings (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  key TEXT NOT NULL UNIQUE,
+  value JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read site settings"
+  ON public.site_settings FOR SELECT USING (true);
+
+CREATE POLICY "Admin can update site settings"
+  ON public.site_settings FOR UPDATE USING (public.is_admin());
+
+CREATE POLICY "Admin can insert site settings"
+  ON public.site_settings FOR INSERT WITH CHECK (public.is_admin());
+
+CREATE TRIGGER update_site_settings_updated_at
+  BEFORE UPDATE ON public.site_settings
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+-- Seed default settings
+INSERT INTO public.site_settings (key, value) VALUES
+('brand', '{
+  "site_name": "Ecosense Solutions",
+  "tagline": "Solutions durables pour un avenir meilleur",
+  "logo_url": "",
+  "favicon_url": "",
+  "phone": "+224 000 000 000",
+  "email": "contact@ecosensesolutions.co",
+  "address": "Conakry, Guinée",
+  "facebook_url": "",
+  "linkedin_url": "",
+  "instagram_url": "",
+  "twitter_url": ""
+}'::jsonb),
+('colors', '{
+  "primary": "#16a34a",
+  "primary_foreground": "#ffffff",
+  "secondary": "#f0fdf4",
+  "accent": "#4ade80",
+  "background": "#ffffff",
+  "foreground": "#0a0a0a",
+  "muted": "#f4f4f5",
+  "muted_foreground": "#71717a",
+  "border": "#e4e4e7",
+  "destructive": "#dc2626"
+}'::jsonb),
+('typography', '{
+  "font_heading": "Playfair Display",
+  "font_body": "Inter",
+  "font_size_base": "16",
+  "heading_weight": "700",
+  "letter_spacing_heading": "-0.02em"
+}'::jsonb);
