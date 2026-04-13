@@ -21,42 +21,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAdmin = async (userId: string) => {
     console.log("🔍 checkAdmin for userId:", userId);
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    console.log("📋 checkAdmin result:", data, "error:");
-    setIsAdmin(!!data);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      console.log("📋 checkAdmin result:", data, "error:", error);
+      setIsAdmin(!!data);
+    } catch (err) {
+      console.error("💥 checkAdmin threw:", err);
+      setIsAdmin(false);
+    } finally {
+      setLoading(false);
+      console.log("🏁 loading set to false");
+    }
   };
 
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log("🔄 onAuthStateChange:", _event, session?.user?.email);
       setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
         console.log("👤 User found, checking admin...");
-        await checkAdmin(session.user.id);
-        console.log("✅ checkAdmin done");
+        setTimeout(() => {
+          checkAdmin(session.user.id);
+        }, 0);
       } else {
         setIsAdmin(false);
+        setLoading(false);
       }
-      setLoading(false);
-      console.log("🏁 loading set to false");
     });
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await checkAdmin(session.user.id);
+        checkAdmin(session.user.id);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();

@@ -221,9 +221,12 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
 
     const parsed: Partial<SiteSettings> = {};
     for (const row of data) {
-      if (row.slug === "settings_brand") parsed.brand = row.content as unknown as BrandSettings;
-      if (row.slug === "settings_colors") parsed.colors = row.content as unknown as ColorSettings;
-      if (row.slug === "settings_typography") parsed.typography = row.content as unknown as TypographySettings;
+      if (row.slug === "settings_brand")
+        parsed.brand = row.content as unknown as BrandSettings;
+      if (row.slug === "settings_colors")
+        parsed.colors = row.content as unknown as ColorSettings;
+      if (row.slug === "settings_typography")
+        parsed.typography = row.content as unknown as TypographySettings;
     }
 
     const merged: SiteSettings = {
@@ -250,12 +253,11 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       ...values,
     } as SiteSettings[typeof group];
     const slug = `settings_${group}`;
-    const { error } = await (supabase
-      .from("page_content") as any)
-      .upsert(
-        { slug, title: group, content: updated },
-        { onConflict: "slug" }
-      );
+    const { error } = await (
+      supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from("page_content") as any
+    ).upsert({ slug, title: group, content: updated }, { onConflict: "slug" });
     if (error) throw error;
 
     const newSettings = { ...settings, [group]: updated };
