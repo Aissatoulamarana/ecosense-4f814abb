@@ -250,10 +250,10 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       ...values,
     } as SiteSettings[typeof group];
     const slug = `settings_${group}`;
-    const { error } = await supabase
-      .from("page_content")
+    const { error } = await (supabase
+      .from("page_content") as any)
       .upsert(
-        { slug, title: group, content: updated as unknown as Record<string, unknown> },
+        { slug, title: group, content: updated },
         { onConflict: "slug" }
       );
     if (error) throw error;
