@@ -249,9 +249,13 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       ...settings[group],
       ...values,
     } as SiteSettings[typeof group];
+    const slug = `settings_${group}`;
     const { error } = await supabase
-      .from("site_settings")
-      .upsert({ key: group, value: updated }, { onConflict: "key" });
+      .from("page_content")
+      .upsert(
+        { slug, title: group, content: updated as unknown as Record<string, unknown> },
+        { onConflict: "slug" }
+      );
     if (error) throw error;
 
     const newSettings = { ...settings, [group]: updated };
