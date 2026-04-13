@@ -207,20 +207,23 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchSettings = async () => {
+    // Try to load settings from page_content table
     const { data, error } = await supabase
-      .from("site_settings")
-      .select("key, value");
-    if (error) {
+      .from("page_content")
+      .select("slug, content")
+      .in("slug", ["settings_brand", "settings_colors", "settings_typography"]);
+
+    if (error || !data || data.length === 0) {
+      applySettingsToDOM(defaultSettings);
       setLoading(false);
       return;
     }
 
     const parsed: Partial<SiteSettings> = {};
-    for (const row of data ?? []) {
-      if (row.key === "brand") parsed.brand = row.value as BrandSettings;
-      if (row.key === "colors") parsed.colors = row.value as ColorSettings;
-      if (row.key === "typography")
-        parsed.typography = row.value as TypographySettings;
+    for (const row of data) {
+      if (row.slug === "settings_brand") parsed.brand = row.content as unknown as BrandSettings;
+      if (row.slug === "settings_colors") parsed.colors = row.content as unknown as ColorSettings;
+      if (row.slug === "settings_typography") parsed.typography = row.content as unknown as TypographySettings;
     }
 
     const merged: SiteSettings = {
