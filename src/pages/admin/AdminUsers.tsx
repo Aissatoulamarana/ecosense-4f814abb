@@ -131,26 +131,21 @@ export default function AdminUsers() {
         return;
       }
 
-      const { data, error } = await supabase.auth.admin.createUser({
-        email: form.email,
-        password: form.password,
-        email_confirm: true,
-        user_metadata: {
+      const { data: fnData, error: fnError } = await supabase.functions.invoke("admin-users", {
+        body: {
+          action: "create",
+          email: form.email,
+          password: form.password,
           first_name: form.first_name,
           last_name: form.last_name,
+          is_admin: form.is_admin,
         },
       });
 
-      if (error || !data.user) {
-        toast.error("Erreur création : " + error?.message);
+      if (fnError || fnData?.error) {
+        toast.error("Erreur création : " + (fnData?.error || fnError?.message));
         setSaving(false);
         return;
-      }
-
-      if (form.is_admin) {
-        await (supabase as any)
-          .from("user_roles")
-          .insert({ user_id: data.user.id, role: "admin" });
       }
 
       toast.success("Utilisateur créé");
@@ -165,9 +160,11 @@ export default function AdminUsers() {
     if (!confirm(`Supprimer l'utilisateur ${profile.email} définitivement ?`))
       return;
 
-    const { error } = await supabase.auth.admin.deleteUser(profile.user_id);
-    if (error) {
-      toast.error("Erreur suppression : " + error.message);
+    const { data: fnData, error } = await supabase.functions.invoke("admin-users", {
+      body: { action: "delete", user_id: profile.user_id },
+    });
+    if (error || fnData?.error) {
+      toast.error("Erreur suppression : " + (fnData?.error || error?.message));
       return;
     }
     toast.success("Utilisateur supprimé");
