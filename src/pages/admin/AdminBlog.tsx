@@ -5,9 +5,19 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, X, FileText, Upload, Image } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  X,
+  FileText,
+  Eye,
+  ExternalLink,
+} from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 interface BlogPost {
   id: string;
@@ -15,11 +25,33 @@ interface BlogPost {
   slug: string;
   content: string | null;
   excerpt: string | null;
-  status: string;
   cover_image_url: string | null;
+  category: string | null;
+  read_time: string | null;
+  status: string;
   published_at: string | null;
   created_at: string;
 }
+
+const CATEGORIES = [
+  "Général",
+  "Innovation",
+  "Communauté",
+  "Durabilité",
+  "Santé",
+];
+
+const FORMATTING_HELP = [
+  { syntax: "## Titre", result: "Titre H2 (section)" },
+  { syntax: "### Sous-titre", result: "Titre H3" },
+  { syntax: "**texte**", result: "Texte en gras" },
+  { syntax: "*texte*", result: "Texte en italique" },
+  { syntax: "> texte", result: "Citation / mise en avant" },
+  { syntax: "- item", result: "Liste à puces" },
+  { syntax: "1. item", result: "Liste numérotée" },
+  { syntax: "![alt](url)", result: "Image inline" },
+  { syntax: "[texte](url)", result: "Lien cliquable" },
+];
 
 export default function AdminBlog() {
   const { user } = useAuth();
@@ -27,92 +59,141 @@ export default function AdminBlog() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [form, setForm] = useState({ title: "", slug: "", content: "", excerpt: "", status: "draft" });
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [form, setForm] = useState({
+    title: "",
+    slug: "",
+    excerpt: "",
+    content: "",
+    category: "Général",
+    read_time: "5 min de lecture",
+    cover_image_url: "",
+    status: "draft",
+  });
 
   const fetchPosts = async () => {
-    const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
-    setPosts(data ?? []);
+    const { data } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setPosts((data as BlogPost[]) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { fetchPosts(); }, []);
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const openNew = () => {
     setIsNew(true);
     setEditing(null);
-    setForm({ title: "", slug: "", content: "", excerpt: "", status: "draft" });
-    setCoverFile(null);
-    setCoverPreview(null);
+    setForm({
+      title: "",
+      slug: "",
+      excerpt: "",
+      content: "",
+      category: "Général",
+      read_time: "5 min de lecture",
+      cover_image_url: "",
+      status: "draft",
+    });
   };
 
   const openEdit = (post: BlogPost) => {
     setIsNew(false);
     setEditing(post);
-    setForm({ title: post.title, slug: post.slug, content: post.content ?? "", excerpt: post.excerpt ?? "", status: post.status });
-    setCoverFile(null);
-    setCoverPreview(post.cover_image_url ?? null);
+    setForm({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt ?? "",
+      content: post.content ?? "",
+      category: post.category ?? "Général",
+      read_time: post.read_time ?? "5 min de lecture",
+      cover_image_url: post.cover_image_url ?? "",
+      status: post.status,
+    });
   };
 
-  const closeForm = () => { setEditing(null); setIsNew(false); setCoverFile(null); setCoverPreview(null); };
+  const closeForm = () => {
+    setEditing(null);
+    setIsNew(false);
+  };
 
   const generateSlug = (title: string) =>
-    title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    title
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setCoverFile(file);
-    setCoverPreview(URL.createObjectURL(file));
-  };
-
-  const uploadCover = async (slug: string): Promise<string | null> => {
-    if (!coverFile) return coverPreview; // keep existing if no new file
-    const ext = coverFile.name.split(".").pop();
-    const path = `${slug}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("blog-covers").upload(path, coverFile, { upsert: true });
-    if (error) { toast.error("Erreur upload image"); return null; }
-    const { data } = supabase.storage.from("blog-covers").getPublicUrl(path);
-    return data.publicUrl;
+  // Auto-estimate read time from content
+  const estimateReadTime = (content: string) => {
+    const words = content.trim().split(/\s+/).length;
+    const minutes = Math.max(1, Math.ceil(words / 200));
+    return `${minutes} min de lecture`;
   };
 
   const handleSave = async () => {
+    if (!form.title.trim()) {
+      toast.error("Le titre est requis");
+      return;
+    }
+
     const slug = form.slug || generateSlug(form.title);
-    setUploading(true);
-
-    const imageUrl = await uploadCover(slug);
-
     const payload = {
       title: form.title,
       slug,
-      content: form.content,
-      excerpt: form.excerpt,
+      excerpt: form.excerpt || null,
+      content: form.content || null,
+      cover_image_url: form.cover_image_url || null,
+      category: form.category,
+      read_time: form.read_time || estimateReadTime(form.content),
       status: form.status,
-      cover_image_url: imageUrl,
-      published_at: form.status === "published" ? new Date().toISOString() : null,
+      published_at:
+        form.status === "published" ? new Date().toISOString() : null,
       author_id: user?.id,
     };
 
     if (isNew) {
       const { error } = await supabase.from("blog_posts").insert(payload);
-      if (error) { toast.error("Erreur lors de la création"); setUploading(false); return; }
-      toast.success("Article créé");
+      if (error) {
+        toast.error("Erreur lors de la création");
+        return;
+      }
+      toast.success("Article créé !");
     } else if (editing) {
-      const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
-      if (error) { toast.error("Erreur lors de la mise à jour"); setUploading(false); return; }
-      toast.success("Article mis à jour");
+      const { error } = await supabase
+        .from("blog_posts")
+        .update(payload)
+        .eq("id", editing.id);
+      if (error) {
+        toast.error("Erreur lors de la mise à jour");
+        return;
+      }
+      toast.success("Article mis à jour !");
     }
-    setUploading(false);
     closeForm();
     fetchPosts();
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Supprimer cet article ?")) return;
+    if (!confirm("Supprimer cet article définitivement ?")) return;
     await supabase.from("blog_posts").delete().eq("id", id);
     toast.success("Article supprimé");
+    fetchPosts();
+  };
+
+  const toggleStatus = async (post: BlogPost) => {
+    const newStatus = post.status === "published" ? "draft" : "published";
+    await supabase
+      .from("blog_posts")
+      .update({
+        status: newStatus,
+        published_at:
+          newStatus === "published" ? new Date().toISOString() : null,
+      })
+      .eq("id", post.id);
     fetchPosts();
   };
 
@@ -120,6 +201,7 @@ export default function AdminBlog() {
 
   return (
     <AdminLayout>
+      {/* Header */}
       <div className="flex items-start justify-between mb-10">
         <div>
           <span className="inline-block px-4 py-1.5 mb-4 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
@@ -128,83 +210,230 @@ export default function AdminBlog() {
           <h1 className="text-3xl font-heading font-bold text-foreground">
             Articles du <span className="gradient-text">Blog</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-2">{posts.length} article{posts.length > 1 ? "s" : ""}</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            {posts.filter((p) => p.status === "published").length} publié(s) ·{" "}
+            {posts.filter((p) => p.status === "draft").length} brouillon(s)
+          </p>
         </div>
         <Button onClick={openNew} className="shadow-glow mt-2">
-          <Plus className="w-4 h-4 mr-2" />Nouvel article
+          <Plus className="w-4 h-4 mr-2" /> Nouvel article
         </Button>
       </div>
 
+      {/* Form */}
       {showForm && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="premium-card p-6 mb-8 space-y-4"
+          className="premium-card p-6 mb-8"
         >
-          <div className="flex items-center justify-between">
+          {/* Form header */}
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
             <h2 className="text-lg font-heading font-semibold text-foreground">
               {isNew ? "Nouvel article" : "Modifier l'article"}
             </h2>
-            <button onClick={closeForm} className="p-1.5 rounded-lg hover:bg-muted/60 transition-colors">
-              <X className="w-5 h-5 text-muted-foreground" />
-            </button>
-          </div>
-          <Input placeholder="Titre" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })} />
-          <Input placeholder="Slug (URL)" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-          <Input placeholder="Extrait (résumé court)" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
-
-          {/* Cover image upload */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Image de couverture</label>
-            <div className="flex items-start gap-4">
-              {coverPreview ? (
-                <div className="relative w-40 h-24 rounded-lg overflow-hidden border border-border">
-                  <img src={coverPreview} alt="Aperçu" className="w-full h-full object-cover" />
-                  <button
-                    onClick={() => { setCoverFile(null); setCoverPreview(null); }}
-                    className="absolute top-1 right-1 p-1 bg-background/80 rounded-full hover:bg-destructive/20 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ) : (
-                <div className="w-40 h-24 rounded-lg border-2 border-dashed border-border flex items-center justify-center text-muted-foreground">
-                  <Image className="w-6 h-6 opacity-40" />
-                </div>
-              )}
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-background hover:bg-muted/60 transition-colors text-foreground">
-                <Upload className="w-4 h-4" />
-                Choisir une image
-                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-              </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowHelp(!showHelp)}
+                className="text-xs text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-lg hover:bg-primary/10"
+              >
+                {showHelp ? "Masquer" : "Aide mise en forme"}
+              </button>
+              <button
+                onClick={closeForm}
+                className="p-1.5 rounded-lg hover:bg-muted/60 transition-colors"
+              >
+                <X className="w-5 h-5 text-muted-foreground" />
+              </button>
             </div>
           </div>
 
-          <Textarea placeholder="Contenu de l'article..." value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={8} />
-          <div className="flex gap-4 items-center">
-            <select
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-              className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+          {/* Formatting help */}
+          {showHelp && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="mb-6 p-4 rounded-xl bg-muted/40 border border-border/40"
             >
-              <option value="draft">Brouillon</option>
-              <option value="published">Publié</option>
-            </select>
-            <Button onClick={handleSave} disabled={uploading} className="shadow-glow">
-              {uploading ? "Enregistrement..." : "Enregistrer"}
-            </Button>
+              <p className="text-xs font-semibold text-foreground mb-3 uppercase tracking-wider">
+                Guide de mise en forme
+              </p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {FORMATTING_HELP.map((h) => (
+                  <div
+                    key={h.syntax}
+                    className="flex items-center gap-3 text-xs"
+                  >
+                    <code className="px-2 py-0.5 bg-background border border-border rounded text-primary font-mono whitespace-nowrap">
+                      {h.syntax}
+                    </code>
+                    <span className="text-muted-foreground">→ {h.result}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                Séparez les paragraphes par une <strong>ligne vide</strong>.
+              </p>
+            </motion.div>
+          )}
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Left: main fields */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                    Titre *
+                  </label>
+                  <Input
+                    placeholder="Titre de l'article"
+                    value={form.title}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        title: e.target.value,
+                        slug: generateSlug(e.target.value),
+                        read_time: estimateReadTime(form.content),
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                    Slug (URL)
+                  </label>
+                  <Input
+                    placeholder="url-de-larticle"
+                    value={form.slug}
+                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                    className="font-mono text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Extrait (résumé affiché dans les cartes)
+                </label>
+                <Textarea
+                  placeholder="Une brève description de l'article..."
+                  value={form.excerpt}
+                  onChange={(e) =>
+                    setForm({ ...form, excerpt: e.target.value })
+                  }
+                  rows={2}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Contenu de l'article
+                </label>
+                <Textarea
+                  placeholder={`## Introduction\n\nVotre contenu ici...\n\n> Une citation importante\n\n- Point 1\n- Point 2`}
+                  value={form.content}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      content: e.target.value,
+                      read_time: estimateReadTime(e.target.value),
+                    })
+                  }
+                  rows={16}
+                  className="font-mono text-sm leading-relaxed"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {form.content.trim().split(/\s+/).filter(Boolean).length} mots
+                  · {form.read_time}
+                </p>
+              </div>
+            </div>
+
+            {/* Right: meta + cover */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Catégorie
+                </label>
+                <select
+                  value={form.category}
+                  onChange={(e) =>
+                    setForm({ ...form, category: e.target.value })
+                  }
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Temps de lecture
+                </label>
+                <Input
+                  placeholder="5 min de lecture"
+                  value={form.read_time}
+                  onChange={(e) =>
+                    setForm({ ...form, read_time: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Statut
+                </label>
+                <select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                >
+                  <option value="draft">Brouillon</option>
+                  <option value="published">Publié</option>
+                </select>
+              </div>
+
+              <ImageUploader
+                label="Image de couverture"
+                value={form.cover_image_url}
+                bucket="blog-covers"
+                section="blog"
+                onChange={(url) => setForm({ ...form, cover_image_url: url })}
+              />
+              <Button onClick={handleSave} className="w-full shadow-glow">
+                {form.status === "published"
+                  ? "Publier l'article"
+                  : "Sauvegarder le brouillon"}
+              </Button>
+            </div>
           </div>
         </motion.div>
       )}
 
+      {/* Posts table */}
       <div className="premium-card overflow-hidden">
         <table className="w-full">
           <thead className="bg-muted/40 border-b border-border/60">
             <tr>
-              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Article</th>
-              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Statut</th>
-              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Date</th>
-              <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</th>
+              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Article
+              </th>
+              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">
+                Catégorie
+              </th>
+              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">
+                Date
+              </th>
+              <th className="text-left p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">
+                Statut
+              </th>
+              <th className="text-right p-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -219,48 +448,87 @@ export default function AdminBlog() {
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     {post.cover_image_url ? (
-                      <img src={post.cover_image_url} alt="" className="w-12 h-8 rounded object-cover border border-border/60" />
+                      <img
+                        src={post.cover_image_url}
+                        alt=""
+                        className="w-12 h-9 rounded-lg object-cover border border-border/40 shrink-0"
+                      />
                     ) : (
-                      <div className="w-12 h-8 rounded bg-muted flex items-center justify-center">
-                        <Image className="w-4 h-4 text-muted-foreground opacity-40" />
+                      <div className="w-12 h-9 rounded-lg bg-muted/60 flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4 text-muted-foreground" />
                       </div>
                     )}
-                    <span className="text-sm font-medium text-foreground">{post.title}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate max-w-[200px]">
+                        {post.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground font-mono truncate">
+                        {post.slug}
+                      </p>
+                    </div>
                   </div>
                 </td>
                 <td className="p-4 hidden md:table-cell">
-                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${
-                    post.status === "published"
-                      ? "bg-primary/10 text-primary border-primary/20"
-                      : "bg-muted text-muted-foreground border-border"
-                  }`}>
-                    {post.status === "published" ? "Publié" : "Brouillon"}
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-muted text-muted-foreground">
+                    {post.category ?? "Général"}
                   </span>
                 </td>
-                <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                <td className="p-4 text-sm text-muted-foreground hidden lg:table-cell">
                   {new Date(post.created_at).toLocaleDateString("fr-FR")}
                 </td>
-                <td className="p-4 text-right space-x-1">
+                <td className="p-4 hidden md:table-cell">
                   <button
-                    onClick={() => openEdit(post)}
-                    className="p-2 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded-lg transition-colors"
+                    onClick={() => toggleStatus(post)}
+                    className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-colors ${
+                      post.status === "published"
+                        ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+                        : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                    }`}
                   >
-                    <Edit className="w-4 h-4" />
+                    {post.status === "published" ? "Publié" : "Brouillon"}
                   </button>
-                  <button
-                    onClick={() => handleDelete(post.id)}
-                    className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                </td>
+                <td className="p-4 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    {post.status === "published" && (
+                      <Link
+                        to={`/blog/${post.slug}`}
+                        target="_blank"
+                        className="p-2 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+                        title="Voir l'article"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => openEdit(post)}
+                      className="p-2 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded-lg transition-colors"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </motion.tr>
             ))}
             {posts.length === 0 && !loading && (
               <tr>
-                <td colSpan={4} className="p-12 text-center text-muted-foreground">
+                <td
+                  colSpan={5}
+                  className="p-16 text-center text-muted-foreground"
+                >
                   <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                  <p>Aucun article pour l'instant</p>
+                  <p className="font-medium mb-1">
+                    Aucun article pour l'instant
+                  </p>
+                  <p className="text-xs">
+                    Cliquez sur "Nouvel article" pour commencer.
+                  </p>
                 </td>
               </tr>
             )}
