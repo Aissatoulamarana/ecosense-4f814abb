@@ -753,7 +753,7 @@ export default function AdminSettings() {
       {/* <div className="min-h-screen bg-muted/30"> */}
       {/* Header */}
       <div className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-1.5 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-heading font-bold text-foreground">
               Paramètres du site
