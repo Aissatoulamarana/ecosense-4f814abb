@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -17,6 +18,19 @@ import { Layout } from "@/components/layout/Layout";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ServiceCard } from "@/components/ui/service-card";
 import heroBg from "@/assets/hero-bg.jpg";
+import { supabase } from "@/integrations/supabase/client";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  cover_image_url: string | null;
+  status: string;
+  published_at: string | null;
+  created_at: string;
+}
 
 const services = [
   {
@@ -59,7 +73,8 @@ const values = [
   {
     icon: Leaf,
     title: "Durabilité",
-    description: "Responsabilité environnementale dans chaque solution que nous proposons.",
+    description:
+      "Responsabilité environnementale dans chaque solution que nous proposons.",
   },
   {
     icon: Heart,
@@ -76,25 +91,45 @@ const values = [
 const blogPosts = [
   {
     title: "L'Avenir de l'Assainissement Durable en Afrique de l'Ouest",
-    excerpt: "Explorer des approches innovantes pour l'hygiène communautaire et les infrastructures.",
+    excerpt:
+      "Explorer des approches innovantes pour l'hygiène communautaire et les infrastructures.",
     date: "15 Jan 2026",
     slug: "future-sustainable-sanitation",
   },
   {
     title: "Engagement Communautaire : Clé du Changement Durable",
-    excerpt: "Comment l'implication locale transforme les résultats en matière d'assainissement.",
+    excerpt:
+      "Comment l'implication locale transforme les résultats en matière d'assainissement.",
     date: "10 Jan 2026",
     slug: "community-engagement",
   },
   {
     title: "Déchets en Valeur : Transformer les Défis en Opportunités",
-    excerpt: "Pratiques innovantes de gestion des déchets créant de la valeur économique.",
+    excerpt:
+      "Pratiques innovantes de gestion des déchets créant de la valeur économique.",
     date: "5 Jan 2026",
     slug: "waste-to-value",
   },
 ];
 
 const Index = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPosts = async () => {
+    const { data } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("status", "published")
+      .order("published_at", { ascending: false });
+    setPosts(data ?? []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -157,8 +192,9 @@ const Index = () => {
             </h1>
 
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Construire des infrastructures d'assainissement durables et autonomiser
-              les communautés à travers la Guinée avec des solutions d'hygiène innovantes.
+              Construire des infrastructures d'assainissement durables et
+              autonomiser les communautés à travers la Guinée avec des solutions
+              d'hygiène innovantes.
             </p>
 
             <motion.div
@@ -200,7 +236,9 @@ const Index = () => {
                 <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-sm text-muted-foreground">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </motion.div>
@@ -308,11 +346,12 @@ const Index = () => {
                   Notre Mission
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Chez Ecosense Solutions, nous nous consacrons à fournir des solutions
-                  innovantes et durables pour l'assainissement et l'hygiène. Nous
-                  construisons et rénovons des infrastructures essentielles adaptées
-                  aux besoins des communautés, garantissant qualité, sécurité et
-                  impact positif dans chaque intervention.
+                  Chez Ecosense Solutions, nous nous consacrons à fournir des
+                  solutions innovantes et durables pour l'assainissement et
+                  l'hygiène. Nous construisons et rénovons des infrastructures
+                  essentielles adaptées aux besoins des communautés,
+                  garantissant qualité, sécurité et impact positif dans chaque
+                  intervention.
                 </p>
                 <ul className="space-y-3">
                   {[
@@ -350,9 +389,9 @@ const Index = () => {
                 Devenez Partenaire
               </h2>
               <p className="text-lg text-primary-foreground/80 mb-8">
-                Rejoignez-nous pour créer un impact durable. Que vous soyez une ONG,
-                un organisme gouvernemental ou une organisation privée, construisons
-                ensemble un avenir plus propre.
+                Rejoignez-nous pour créer un impact durable. Que vous soyez une
+                ONG, un organisme gouvernemental ou une organisation privée,
+                construisons ensemble un avenir plus propre.
               </p>
               <Button
                 asChild
@@ -380,7 +419,7 @@ const Index = () => {
           />
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogPosts.map((post, index) => (
+            {posts.map((post, index) => (
               <motion.article
                 key={post.slug}
                 initial={{ opacity: 0, y: 20 }}
@@ -394,7 +433,7 @@ const Index = () => {
                   className="block p-6 rounded-2xl bg-card border border-border/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                 >
                   <time className="text-xs text-muted-foreground">
-                    {post.date}
+                    {post.published_at}
                   </time>
                   <h3 className="text-lg font-semibold text-foreground mt-2 mb-3 group-hover:text-primary transition-colors">
                     {post.title}
