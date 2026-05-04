@@ -39,6 +39,20 @@ interface BlogPost {
   created_at: string;
 }
 
+interface HomeSection {
+  id: string;
+  section_key: string;
+  title: string | null;
+  subtitle: string | null;
+  description: string | null;
+  button_text: string | null;
+  button_link: string | null;
+  secondary_button_text: string | null;
+  secondary_button_link: string | null;
+  image_url: string | null;
+  is_active: boolean;
+}
+
 const services = [
   {
     title: "Solutions Technologiques",
@@ -80,12 +94,6 @@ const services = [
   },
 ];
 
-const stats = [
-  { value: "+44", label: "Villages impactés", suffix: "" },
-  { value: "+50", label: "Partenaires" },
-  { value: "5000", label: "Personnes formées", suffix: "+" },
-];
-
 const values = [
   {
     icon: Leaf,
@@ -100,25 +108,52 @@ const values = [
   {
     icon: TrendingUp,
     title: "Innovation",
-    description: "Nouvelles approches face aux défis sanitaires d'aujourd'hui.",
+    description: "Développer de nouvelles approches face aux défis sanitaires.",
   },
 ];
 
 const Index = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, 150]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0.4]);
-  const heroScale = useTransform(scrollY, [0, 400], [1, 1.08]);
+  const [loading, setLoading] = useState(true);
+  const [hero, setHero] = useState<HomeSection | null>(null);
+  const [stats, setStats] = useState([]);
 
   useEffect(() => {
     supabase
       .from("blog_posts")
       .select("*")
       .eq("status", "published")
-      .order("published_at", { ascending: false })
-      .limit(3)
-      .then(({ data }) => setPosts(data ?? []));
+      .order("published_at", { ascending: false });
+    setPosts(data ?? []);
+    setLoading(false);
+  };
+
+  const fetchHero = async () => {
+    const { data, error } = await supabase
+      .from("homepage_sections" as any)
+      .select("*")
+      .eq("section_key", "hero")
+      .single<HomeSection>();
+
+    if (!error && data) {
+      setHero(data);
+    }
+  };
+
+  const fetchStats = async () => {
+    const { data, error } = await supabase
+      .from("homepage_stats")
+      .select("*")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true });
+
+    setStats(data || []);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+    fetchHero();
+    fetchStats();
   }, []);
 
   return (
@@ -131,8 +166,8 @@ const Index = () => {
           className="absolute inset-0"
         >
           <img
-            src={heroCommunity}
-            alt="Communauté en action pour l'assainissement durable"
+            src={hero?.image_url || heroBg}
+            alt={hero?.title || "Communauté durable"}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
@@ -172,8 +207,16 @@ const Index = () => {
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-medium tracking-wider uppercase rounded-full bg-background/60 backdrop-blur-md border border-border/40 text-foreground"
             >
+
+             
+           
+
+           
+
+           
+
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              Solutions d'Assainissement Durables · 2026
+         {hero?.subtitle}
             </motion.span>
 
             <motion.h1
@@ -182,7 +225,7 @@ const Index = () => {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-[clamp(2.5rem,7vw,5.5rem)] font-heading font-bold text-foreground tracking-[-0.03em] leading-[0.95] mb-8"
             >
-              Innover pour un avenir
+                  {hero?.title}
               <br />
               <span className="gradient-text italic font-light">plus propre</span>
               <span className="text-foreground">, plus </span>
@@ -196,10 +239,9 @@ const Index = () => {
               transition={{ delay: 0.4 }}
               className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed"
             >
-              Nous construisons des infrastructures d'assainissement durables et
-              autonomisons les communautés à travers l'Afrique avec des solutions
-              d'hygiène innovantes.
+                  {hero?.description}
             </motion.p>
+
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -207,19 +249,22 @@ const Index = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-wrap items-center gap-4"
             >
+
               <Magnetic strength={0.2}>
                 <Button asChild size="lg" className="px-8 h-12 text-base shadow-glow group">
-                  <Link to="/services">
-                    Découvrir nos solutions
+                  <Link to={hero?.button_link}>
+                  {hero?.button_text}
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
               </Magnetic>
               <Magnetic strength={0.2}>
                 <Button asChild variant="outline" size="lg" className="px-8 h-12 text-base backdrop-blur-md bg-background/40">
-                  <Link to="/contact">Demander un devis</Link>
+                  <Link to={hero?.secondary_button_link}>
+                  {hero?.secondary_button_text}
                 </Button>
               </Magnetic>
+
             </motion.div>
           </div>
 
