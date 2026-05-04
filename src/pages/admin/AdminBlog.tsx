@@ -42,17 +42,6 @@ const CATEGORIES = [
   "Santé",
 ];
 
-const FORMATTING_HELP = [
-  { syntax: "## Titre", result: "Titre H2 (section)" },
-  { syntax: "### Sous-titre", result: "Titre H3" },
-  { syntax: "**texte**", result: "Texte en gras" },
-  { syntax: "*texte*", result: "Texte en italique" },
-  { syntax: "> texte", result: "Citation / mise en avant" },
-  { syntax: "- item", result: "Liste à puces" },
-  { syntax: "1. item", result: "Liste numérotée" },
-  { syntax: "![alt](url)", result: "Image inline" },
-  { syntax: "[texte](url)", result: "Lien cliquable" },
-];
 
 export default function AdminBlog() {
   const { user } = useAuth();
@@ -60,7 +49,7 @@ export default function AdminBlog() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
+  
   const [form, setForm] = useState({
     title: "",
     slug: "",
