@@ -23,6 +23,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Layout } from "@/components/layout/Layout";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { Magnetic } from "@/components/ui/magnetic-button";
+import { ParallaxImage } from "@/components/ui/parallax-image";
+import contactOffice from "@/assets/2026-contact-office.jpg";
 import { toast } from "sonner";
 
 const contactInfo = [

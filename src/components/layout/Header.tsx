@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import logoEcosense from "@/assets/logo-ecosense.jpg";
 
 const navLinks = [
@@ -19,6 +20,9 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,12 +47,29 @@ export function Header() {
     >
       <div className="section-container">
         <nav className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          {/* Logo (triple-clic discret pour ouvrir l'admin) */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 group select-none"
+            onClick={(e) => {
+              clickCountRef.current += 1;
+              if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+              if (clickCountRef.current >= 3) {
+                e.preventDefault();
+                clickCountRef.current = 0;
+                toast.success("Accès administrateur", { duration: 1500 });
+                navigate("/admin/login");
+                return;
+              }
+              clickTimerRef.current = setTimeout(() => {
+                clickCountRef.current = 0;
+              }, 600);
+            }}
+          >
             <img
               src={logoEcosense}
               alt="Ecosense Solutions"
-              className="h-10 w-auto"
+              className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
             />
           </Link>
 
