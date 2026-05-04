@@ -32,6 +32,20 @@ interface BlogPost {
   created_at: string;
 }
 
+interface HomeSection {
+  id: string;
+  section_key: string;
+  title: string | null;
+  subtitle: string | null;
+  description: string | null;
+  button_text: string | null;
+  button_link: string | null;
+  secondary_button_text: string | null;
+  secondary_button_link: string | null;
+  image_url: string | null;
+  is_active: boolean;
+}
+
 const services = [
   {
     title: "Solutions Technologiques",
@@ -63,12 +77,6 @@ const services = [
   },
 ];
 
-const stats = [
-  { value: "+44", label: "Villages" },
-  { value: "+50", label: "Partenaires" },
-  { value: "65%", label: "La Guinée" },
-];
-
 const values = [
   {
     icon: Leaf,
@@ -88,33 +96,11 @@ const values = [
   },
 ];
 
-const blogPosts = [
-  {
-    title: "L'Avenir de l'Assainissement Durable en Afrique de l'Ouest",
-    excerpt:
-      "Explorer des approches innovantes pour l'hygiène communautaire et les infrastructures.",
-    date: "15 Jan 2026",
-    slug: "future-sustainable-sanitation",
-  },
-  {
-    title: "Engagement Communautaire : Clé du Changement Durable",
-    excerpt:
-      "Comment l'implication locale transforme les résultats en matière d'assainissement.",
-    date: "10 Jan 2026",
-    slug: "community-engagement",
-  },
-  {
-    title: "Déchets en Valeur : Transformer les Défis en Opportunités",
-    excerpt:
-      "Pratiques innovantes de gestion des déchets créant de la valeur économique.",
-    date: "5 Jan 2026",
-    slug: "waste-to-value",
-  },
-];
-
 const Index = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hero, setHero] = useState<HomeSection | null>(null);
+  const [stats, setStats] = useState([]);
 
   const fetchPosts = async () => {
     const { data } = await supabase
@@ -126,8 +112,32 @@ const Index = () => {
     setLoading(false);
   };
 
+  const fetchHero = async () => {
+    const { data, error } = await supabase
+      .from("homepage_sections" as any)
+      .select("*")
+      .eq("section_key", "hero")
+      .single<HomeSection>();
+
+    if (!error && data) {
+      setHero(data);
+    }
+  };
+
+  const fetchStats = async () => {
+    const { data, error } = await supabase
+      .from("homepage_stats")
+      .select("*")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true });
+
+    setStats(data || []);
+  };
+
   useEffect(() => {
     fetchPosts();
+    fetchHero();
+    fetchStats();
   }, []);
 
   return (
@@ -137,8 +147,8 @@ const Index = () => {
         {/* Background */}
         <div className="absolute inset-0">
           <img
-            src={heroBg}
-            alt="Communauté durable"
+            src={hero?.image_url || heroBg}
+            alt={hero?.title || "Communauté durable"}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
@@ -183,18 +193,16 @@ const Index = () => {
               transition={{ delay: 0.2 }}
               className="inline-block px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
             >
-              Solutions d'Assainissement Durables
+              {hero?.subtitle}
             </motion.span>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
-              Innover pour un Avenir{" "}
+              {hero?.title}{" "}
               <span className="gradient-text">Plus Propre et Plus Sain</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Construire des infrastructures d'assainissement durables et
-              autonomiser les communautés à travers la Guinée avec des solutions
-              d'hygiène innovantes.
+              {hero?.description}
             </p>
 
             <motion.div
@@ -208,8 +216,8 @@ const Index = () => {
                 size="lg"
                 className="px-8 h-12 text-base shadow-glow"
               >
-                <Link to="/services">
-                  Découvrir Nos Solutions
+                <Link to={hero?.button_link}>
+                  {hero?.button_text}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
@@ -219,7 +227,9 @@ const Index = () => {
                 size="lg"
                 className="px-8 h-12 text-base"
               >
-                <Link to="/contact">Demander un Devis</Link>
+                <Link to={hero?.secondary_button_link}>
+                  {hero?.secondary_button_text}
+                </Link>
               </Button>
             </motion.div>
           </motion.div>
