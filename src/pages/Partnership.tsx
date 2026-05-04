@@ -11,232 +11,196 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { Magnetic } from "@/components/ui/magnetic-button";
+import { ParallaxImage } from "@/components/ui/parallax-image";
+import partnershipImg from "@/assets/2026-partnership-handshake.jpg";
+import aerialVillage from "@/assets/2026-aerial-village.jpg";
 
 const benefits = [
-  {
-    icon: Globe,
-    title: "Portée Étendue",
-    description:
-      "Profitez de notre expertise locale et de nos réseaux pour étendre votre impact à travers la Guinée.",
-  },
-  {
-    icon: Lightbulb,
-    title: "Accès à l'Innovation",
-    description:
-      "Bénéficiez de nos approches de pointe en matière de solutions d'assainissement durables.",
-  },
-  {
-    icon: Users,
-    title: "Confiance Communautaire",
-    description:
-      "Profitez de nos relations établies avec les communautés et les leaders locaux.",
-  },
-  {
-    icon: Building,
-    title: "Excellence Opérationnelle",
-    description:
-      "Partenariat avec une équipe reconnue pour la qualité d'exécution et la fiabilité.",
-  },
+  { icon: Globe, title: "Portée étendue", description: "Profitez de notre expertise locale et de nos réseaux pour étendre votre impact." },
+  { icon: Lightbulb, title: "Accès à l'innovation", description: "Bénéficiez de nos approches de pointe en matière de solutions durables." },
+  { icon: Users, title: "Confiance communautaire", description: "Profitez de nos relations établies avec les communautés locales." },
+  { icon: Building, title: "Excellence opérationnelle", description: "Une équipe reconnue pour la qualité d'exécution et la fiabilité." },
 ];
 
 const partnerTypes = [
-  {
-    title: "ONG & Organisations de Développement",
-    description:
-      "Collaborez sur des projets alignés sur les objectifs de développement durable et créant un impact communautaire durable.",
-  },
-  {
-    title: "Organismes Gouvernementaux",
-    description:
-      "Partenariat pour mettre en œuvre des initiatives de santé publique et des programmes de développement d'infrastructures.",
-  },
-  {
-    title: "Secteur Privé",
-    description:
-      "Partenariats d'entreprise pour les initiatives RSE, la gestion des installations et les pratiques commerciales durables.",
-  },
-  {
-    title: "Institutions Académiques",
-    description:
-      "Collaborations de recherche et partenariats éducatifs pour faire progresser les connaissances et l'innovation en assainissement.",
-  },
+  { title: "ONG & Organisations de développement", description: "Collaborez sur des projets alignés sur les objectifs de développement durable et créant un impact communautaire durable." },
+  { title: "Organismes gouvernementaux", description: "Partenariat pour mettre en œuvre des initiatives de santé publique et des programmes d'infrastructures." },
+  { title: "Secteur privé", description: "Partenariats d'entreprise pour les initiatives RSE et les pratiques commerciales durables." },
+  { title: "Institutions académiques", description: "Collaborations de recherche et partenariats éducatifs pour faire progresser l'innovation." },
 ];
 
 const caseStudies = [
-  {
-    title: "Projet d'Assainissement Communautaire - Conakry",
-    description:
-      "Partenariat avec une ONG internationale pour construire 50 latrines modernes et former 500 membres de la communauté.",
-    outcome: "Réduction de 80% des maladies hydriques",
-  },
-  {
-    title: "Initiative d'Hygiène Scolaire",
-    description:
-      "Collaboration avec le Ministère de l'Éducation pour améliorer les installations sanitaires dans 20 écoles.",
-    outcome: "Plus de 5 000 élèves touchés",
-  },
-  {
-    title: "Programme de Gestion des Déchets",
-    description:
-      "Coentreprise avec le gouvernement local pour mettre en place une collecte des déchets communautaire.",
-    outcome: "Augmentation de 70% de la couverture de collecte",
-  },
+  { title: "Projet d'assainissement communautaire — Conakry", description: "Construction de 50 latrines modernes et formation de 500 membres de la communauté.", outcome: "Réduction de 80% des maladies hydriques" },
+  { title: "Initiative d'hygiène scolaire", description: "Collaboration avec le Ministère de l'Éducation pour 20 écoles équipées.", outcome: "Plus de 5 000 élèves touchés" },
+  { title: "Programme de gestion des déchets", description: "Coentreprise pour mettre en place une collecte des déchets communautaire.", outcome: "+70% de couverture de collecte" },
 ];
 
 export default function Partnership() {
   return (
     <Layout>
-      {/* Hero */}
-      <section className="pt-32 pb-20 hero-gradient">
-        <div className="section-container">
+      {/* Hero immersif */}
+      <section className="relative min-h-[80vh] flex items-end overflow-hidden">
+        <ParallaxImage
+          src={partnershipImg}
+          alt="Poignée de main symbolisant un partenariat solide"
+          className="absolute inset-0"
+          speed={0.2}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+
+        <div className="relative section-container pt-32 pb-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
             className="max-w-3xl"
           >
-            <span className="inline-block px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-medium uppercase tracking-widest rounded-full bg-background/70 backdrop-blur-md border border-border/40 text-foreground">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               Partenariat
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
-              Ensemble pour un <span className="gradient-text">Avenir Meilleur</span>
+            <h1 className="text-[clamp(2.5rem,6vw,5.5rem)] font-heading font-bold text-foreground tracking-[-0.03em] leading-[0.95] mb-8">
+              Ensemble pour un
+              <br />
+              <span className="gradient-text italic font-light">avenir meilleur</span>.
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Rejoignez-nous pour créer un impact durable. Que vous soyez une ONG,
-              un organisme gouvernemental ou une organisation privée, nous avons
-              des opportunités de partenariat alignées sur votre mission.
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+              Rejoignez-nous pour créer un impact durable. Nous avons des
+              opportunités de partenariat alignées sur votre mission.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Benefits */}
-      <section className="py-24">
+      <section className="py-24 lg:py-32">
         <div className="section-container">
-          <SectionHeading
-            badge="Pourquoi Devenir Partenaire"
-            title="Débloquer de Nouvelles Possibilités"
-            description="Découvrez les avantages d'un partenariat avec Ecosense Solutions."
-          />
+          <ScrollReveal>
+            <span className="inline-block text-xs font-medium uppercase tracking-widest text-accent mb-4">
+              — Pourquoi devenir partenaire
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-[1.05] mb-12">
+              Débloquer de nouvelles <span className="gradient-text italic font-light">possibilités</span>.
+            </h2>
+          </ScrollReveal>
 
-          <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {benefits.map((benefit, index) => (
-              <motion.div
-                key={benefit.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="p-6 rounded-2xl bg-card border border-border/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 mb-5">
-                  <benefit.icon className="w-6 h-6 text-primary" />
+              <ScrollReveal key={benefit.title} delay={index * 0.08}>
+                <div className="group relative h-full p-7 rounded-3xl bg-card border border-border/50 hover:border-primary/40 hover:shadow-xl transition-all duration-500 overflow-hidden">
+                  <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-primary/15 to-accent/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/15 mb-5 group-hover:scale-110 transition-transform">
+                      <benefit.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-heading font-semibold text-foreground mb-2">{benefit.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{benefit.description}</p>
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {benefit.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {benefit.description}
-                </p>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Partner Types */}
-      <section className="py-24 bg-muted/30">
+      {/* Partner types */}
+      <section className="py-24 lg:py-32 bg-muted/30">
         <div className="section-container">
-          <SectionHeading
-            badge="Avec Qui Nous Travaillons"
-            title="Opportunités de Collaboration Diverses"
-            description="Nous travaillons avec des organisations de tous secteurs pour maximiser l'impact."
-          />
+          <ScrollReveal>
+            <span className="inline-block text-xs font-medium uppercase tracking-widest text-accent mb-4">
+              — Avec qui nous travaillons
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-[1.05] mb-12">
+              Des collaborations <span className="gradient-text italic font-light">diverses</span>.
+            </h2>
+          </ScrollReveal>
 
-          <div className="mt-16 grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-5">
             {partnerTypes.map((type, index) => (
-              <motion.div
-                key={type.title}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex items-start gap-4 p-6 rounded-2xl bg-card border border-border/50"
-              >
-                <div className="shrink-0">
-                  <Handshake className="w-6 h-6 text-primary" />
+              <ScrollReveal key={type.title} delay={index * 0.08} direction={index % 2 === 0 ? "left" : "right"}>
+                <div className="group flex items-start gap-5 p-7 rounded-3xl bg-background border border-border/50 hover:border-primary/40 hover:shadow-lg transition-all duration-300">
+                  <div className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Handshake className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-heading font-semibold text-foreground mb-2">{type.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{type.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {type.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {type.description}
-                  </p>
-                </div>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Case Studies */}
-      <section className="py-24">
-        <div className="section-container">
-          <SectionHeading
-            badge="Histoires de Succès"
-            title="Des Partenariats Qui Ont Fait la Différence"
-            description="Des exemples concrets de ce que nous avons accompli avec nos partenaires."
-          />
+      {/* Case studies */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <ParallaxImage
+          src={aerialVillage}
+          alt="Vue aérienne"
+          className="absolute inset-0"
+          speed={0.15}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/85 to-background" />
 
-          <div className="mt-16 grid md:grid-cols-3 gap-8">
+        <div className="relative section-container">
+          <ScrollReveal>
+            <span className="inline-block text-xs font-medium uppercase tracking-widest text-accent mb-4">
+              — Histoires de succès
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-[1.05] mb-12">
+              Des partenariats qui <span className="gradient-text italic font-light">transforment</span>.
+            </h2>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-3 gap-5">
             {caseStudies.map((study, index) => (
-              <motion.div
-                key={study.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="glass-card p-8"
-              >
-                <h3 className="text-lg font-semibold text-foreground mb-3">
-                  {study.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {study.description}
-                </p>
-                <div className="flex items-center gap-2 text-primary font-medium text-sm">
-                  <CheckCircle className="w-4 h-4" />
-                  {study.outcome}
+              <ScrollReveal key={study.title} delay={index * 0.1} direction="up">
+                <div className="glass-card p-8 h-full hover:shadow-glow transition-shadow duration-500">
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-3">{study.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{study.description}</p>
+                  <div className="flex items-center gap-2 text-accent font-medium text-sm pt-4 border-t border-border/40">
+                    <CheckCircle className="w-4 h-4 shrink-0" />
+                    {study.outcome}
+                  </div>
                 </div>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-muted/30">
+      <section className="py-24 lg:py-32 bg-muted/30">
         <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <h2 className="text-3xl font-bold text-foreground mb-6">
-              Prêt à Devenir Partenaire ?
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Discutons de la façon dont nous pouvons travailler ensemble pour
-              créer un impact durable. Contactez-nous pour démarrer la conversation.
-            </p>
-            <Button asChild size="lg" className="shadow-glow">
-              <Link to="/contact">
-                Démarrer une Conversation
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </Button>
-          </motion.div>
+          <ScrollReveal direction="scale">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-12 lg:p-16 text-center">
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-white/30 blur-3xl" />
+                <div className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-accent/40 blur-3xl" />
+              </div>
+              <div className="relative max-w-2xl mx-auto">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-primary-foreground mb-6 leading-tight">
+                  Prêt à devenir partenaire ?
+                </h2>
+                <p className="text-primary-foreground/85 text-lg mb-8">
+                  Discutons de la façon dont nous pouvons travailler ensemble
+                  pour créer un impact durable.
+                </p>
+                <Magnetic strength={0.2}>
+                  <Button asChild size="lg" variant="secondary" className="px-8 h-12">
+                    <Link to="/contact">
+                      Démarrer une conversation
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
+                  </Button>
+                </Magnetic>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </Layout>
