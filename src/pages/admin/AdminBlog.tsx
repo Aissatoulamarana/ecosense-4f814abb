@@ -239,12 +239,6 @@ export default function AdminBlog() {
             </h2>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setShowHelp(!showHelp)}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-lg hover:bg-primary/10"
-              >
-                {showHelp ? "Masquer" : "Aide mise en forme"}
-              </button>
-              <button
                 onClick={closeForm}
                 className="p-1.5 rounded-lg hover:bg-muted/60 transition-colors"
               >
@@ -252,35 +246,6 @@ export default function AdminBlog() {
               </button>
             </div>
           </div>
-
-          {/* Formatting help */}
-          {showHelp && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="mb-6 p-4 rounded-xl bg-muted/40 border border-border/40"
-            >
-              <p className="text-xs font-semibold text-foreground mb-3 uppercase tracking-wider">
-                Guide de mise en forme
-              </p>
-              <div className="grid sm:grid-cols-2 gap-2">
-                {FORMATTING_HELP.map((h) => (
-                  <div
-                    key={h.syntax}
-                    className="flex items-center gap-3 text-xs"
-                  >
-                    <code className="px-2 py-0.5 bg-background border border-border rounded text-primary font-mono whitespace-nowrap">
-                      {h.syntax}
-                    </code>
-                    <span className="text-muted-foreground">→ {h.result}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Séparez les paragraphes par une <strong>ligne vide</strong>.
-              </p>
-            </motion.div>
-          )}
 
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Left: main fields */}
