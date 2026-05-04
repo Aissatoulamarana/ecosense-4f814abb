@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
 interface BlogPost {
   id: string;
@@ -127,12 +128,16 @@ export default function AdminBlog() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
-  // Auto-estimate read time from content
+  // Auto-estimate read time from content (strip HTML tags first)
   const estimateReadTime = (content: string) => {
-    const words = content.trim().split(/\s+/).length;
+    const text = content.replace(/<[^>]*>/g, " ").trim();
+    const words = text.split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.ceil(words / 200));
     return `${minutes} min de lecture`;
   };
+
+  const wordCount = (html: string) =>
+    html.replace(/<[^>]*>/g, " ").trim().split(/\s+/).filter(Boolean).length;
 
   const handleSave = async () => {
     if (!form.title.trim()) {
