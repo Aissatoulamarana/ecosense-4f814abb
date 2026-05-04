@@ -512,7 +512,14 @@ export default function BlogDetail() {
               transition={{ delay: 0.2 }}
             >
               {post.content ? (
-                <RenderContent text={post.content} />
+                /<\/?[a-z][\s\S]*>/i.test(post.content) ? (
+                  <div
+                    className="article-body article-html"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                  />
+                ) : (
+                  <RenderContent text={post.content} />
+                )
               ) : (
                 <p className="text-muted-foreground italic">
                   Contenu non disponible.
@@ -587,15 +594,66 @@ export default function BlogDetail() {
 
       {/* ── Prose styles ─────────────────────────────────────────────────────── */}
       <style>{`
-        .article-body > * + * {
-          margin-top: 1.25rem;
-        }
+        .article-body > * + * { margin-top: 1.25rem; }
         .article-body h2 + p,
-        .article-body h3 + p {
-          margin-top: 0.75rem;
+        .article-body h3 + p { margin-top: 0.75rem; }
+        .article-body blockquote + p { margin-top: 1.5rem; }
+
+        /* HTML rendering (TipTap output) */
+        .article-html p {
+          color: hsl(var(--muted-foreground));
+          line-height: 1.75; font-size: 1rem; margin: 1rem 0;
         }
-        .article-body blockquote + p {
-          margin-top: 1.5rem;
+        .article-html h2 {
+          font-size: 1.5rem; font-weight: 700;
+          color: hsl(var(--foreground));
+          margin: 2.5rem 0 1rem; line-height: 1.3;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid hsl(var(--border) / 0.5);
+        }
+        .article-html h3 {
+          font-size: 1.25rem; font-weight: 600;
+          color: hsl(var(--foreground));
+          margin: 2rem 0 0.75rem;
+        }
+        .article-html ul, .article-html ol {
+          padding-left: 1.5rem; margin: 1rem 0;
+          color: hsl(var(--muted-foreground));
+        }
+        .article-html ul { list-style: disc; }
+        .article-html ol { list-style: decimal; }
+        .article-html li { margin: 0.5rem 0; line-height: 1.7; }
+        .article-html blockquote {
+          border-left: 4px solid hsl(var(--primary) / 0.6);
+          background: hsl(var(--primary) / 0.05);
+          padding: 1rem 1.25rem;
+          margin: 1.5rem 0;
+          border-radius: 0 0.75rem 0.75rem 0;
+          font-style: italic;
+          color: hsl(var(--foreground) / 0.8);
+        }
+        .article-html blockquote p { margin: 0; color: inherit; }
+        .article-html a {
+          color: hsl(var(--primary));
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+        .article-html strong { color: hsl(var(--foreground)); font-weight: 600; }
+        .article-html code {
+          background: hsl(var(--muted));
+          color: hsl(var(--primary));
+          padding: 0.15rem 0.4rem;
+          border-radius: 0.25rem;
+          font-size: 0.875em;
+        }
+        .article-html img {
+          max-width: 100%; height: auto;
+          border-radius: 1rem; margin: 2rem 0;
+          box-shadow: 0 8px 24px hsl(var(--foreground) / 0.08);
+        }
+        .article-html hr {
+          border: 0; border-top: 1px solid hsl(var(--border) / 0.5);
+          margin: 2rem 0;
         }
       `}</style>
     </Layout>
