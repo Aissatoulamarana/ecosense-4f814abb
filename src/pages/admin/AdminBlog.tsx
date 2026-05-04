@@ -334,22 +334,19 @@ export default function AdminBlog() {
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                   Contenu de l'article
                 </label>
-                <Textarea
-                  placeholder={`## Introduction\n\nVotre contenu ici...\n\n> Une citation importante\n\n- Point 1\n- Point 2`}
+                <RichTextEditor
                   value={form.content}
-                  onChange={(e) =>
+                  placeholder="Commencez à rédiger votre article..."
+                  onChange={(html) =>
                     setForm({
                       ...form,
-                      content: e.target.value,
-                      read_time: estimateReadTime(e.target.value),
+                      content: html,
+                      read_time: estimateReadTime(html),
                     })
                   }
-                  rows={16}
-                  className="font-mono text-sm leading-relaxed"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {form.content.trim().split(/\s+/).filter(Boolean).length} mots
-                  · {form.read_time}
+                  {wordCount(form.content)} mots · {form.read_time}
                 </p>
               </div>
             </div>
