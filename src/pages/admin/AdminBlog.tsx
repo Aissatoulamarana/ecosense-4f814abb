@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
 interface BlogPost {
   id: string;
@@ -41,17 +42,6 @@ const CATEGORIES = [
   "Santé",
 ];
 
-const FORMATTING_HELP = [
-  { syntax: "## Titre", result: "Titre H2 (section)" },
-  { syntax: "### Sous-titre", result: "Titre H3" },
-  { syntax: "**texte**", result: "Texte en gras" },
-  { syntax: "*texte*", result: "Texte en italique" },
-  { syntax: "> texte", result: "Citation / mise en avant" },
-  { syntax: "- item", result: "Liste à puces" },
-  { syntax: "1. item", result: "Liste numérotée" },
-  { syntax: "![alt](url)", result: "Image inline" },
-  { syntax: "[texte](url)", result: "Lien cliquable" },
-];
 
 export default function AdminBlog() {
   const { user } = useAuth();
@@ -59,7 +49,7 @@ export default function AdminBlog() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
+  
   const [form, setForm] = useState({
     title: "",
     slug: "",
@@ -127,12 +117,16 @@ export default function AdminBlog() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
-  // Auto-estimate read time from content
+  // Auto-estimate read time from content (strip HTML tags first)
   const estimateReadTime = (content: string) => {
-    const words = content.trim().split(/\s+/).length;
+    const text = content.replace(/<[^>]*>/g, " ").trim();
+    const words = text.split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.ceil(words / 200));
     return `${minutes} min de lecture`;
   };
+
+  const wordCount = (html: string) =>
+    html.replace(/<[^>]*>/g, " ").trim().split(/\s+/).filter(Boolean).length;
 
   const handleSave = async () => {
     if (!form.title.trim()) {
@@ -234,12 +228,6 @@ export default function AdminBlog() {
             </h2>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setShowHelp(!showHelp)}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 rounded-lg hover:bg-primary/10"
-              >
-                {showHelp ? "Masquer" : "Aide mise en forme"}
-              </button>
-              <button
                 onClick={closeForm}
                 className="p-1.5 rounded-lg hover:bg-muted/60 transition-colors"
               >
@@ -247,35 +235,6 @@ export default function AdminBlog() {
               </button>
             </div>
           </div>
-
-          {/* Formatting help */}
-          {showHelp && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="mb-6 p-4 rounded-xl bg-muted/40 border border-border/40"
-            >
-              <p className="text-xs font-semibold text-foreground mb-3 uppercase tracking-wider">
-                Guide de mise en forme
-              </p>
-              <div className="grid sm:grid-cols-2 gap-2">
-                {FORMATTING_HELP.map((h) => (
-                  <div
-                    key={h.syntax}
-                    className="flex items-center gap-3 text-xs"
-                  >
-                    <code className="px-2 py-0.5 bg-background border border-border rounded text-primary font-mono whitespace-nowrap">
-                      {h.syntax}
-                    </code>
-                    <span className="text-muted-foreground">→ {h.result}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Séparez les paragraphes par une <strong>ligne vide</strong>.
-              </p>
-            </motion.div>
-          )}
 
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Left: main fields */}
@@ -329,22 +288,19 @@ export default function AdminBlog() {
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                   Contenu de l'article
                 </label>
-                <Textarea
-                  placeholder={`## Introduction\n\nVotre contenu ici...\n\n> Une citation importante\n\n- Point 1\n- Point 2`}
+                <RichTextEditor
                   value={form.content}
-                  onChange={(e) =>
+                  placeholder="Commencez à rédiger votre article..."
+                  onChange={(html) =>
                     setForm({
                       ...form,
-                      content: e.target.value,
-                      read_time: estimateReadTime(e.target.value),
+                      content: html,
+                      read_time: estimateReadTime(html),
                     })
                   }
-                  rows={16}
-                  className="font-mono text-sm leading-relaxed"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {form.content.trim().split(/\s+/).filter(Boolean).length} mots
-                  · {form.read_time}
+                  {wordCount(form.content)} mots · {form.read_time}
                 </p>
               </div>
             </div>
