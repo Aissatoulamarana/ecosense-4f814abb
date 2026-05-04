@@ -14,7 +14,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { Magnetic } from "@/components/ui/magnetic-button";
+import { ParallaxImage } from "@/components/ui/parallax-image";
+import infrastructureImg from "@/assets/2026-services-infrastructure.jpg";
+import educationImg from "@/assets/2026-education-handwashing.jpg";
+import sustainabilityImg from "@/assets/2026-sustainability.jpg";
+import aerialVillage from "@/assets/2026-aerial-village.jpg";
+import engineerImg from "@/assets/2026-engineer-portrait.jpg";
 
 const services = [
   {
@@ -23,6 +30,7 @@ const services = [
     description:
       "Développement et promotion de technologies avancées pour l'assainissement et les infrastructures écologiques. Nous concevons des solutions intelligentes qui répondent aux défis environnementaux actuels.",
     icon: Cpu,
+    image: aerialVillage,
     features: [
       "Technologies d'assainissement avancées",
       "Systèmes de surveillance intelligents",
@@ -37,6 +45,7 @@ const services = [
     description:
       "Construction et rénovation de sanitaires, stations de lavage, et autres infrastructures essentielles. Nous livrons des solutions durables adaptées aux contextes locaux.",
     icon: Building2,
+    image: infrastructureImg,
     features: [
       "Conception d'infrastructures sur mesure",
       "Matériaux et construction de qualité",
@@ -51,6 +60,7 @@ const services = [
     description:
       "Programmes de sensibilisation pour encourager le changement de comportement et promouvoir des pratiques d'hygiène. Nous créons un changement comportemental durable.",
     icon: Users,
+    image: educationImg,
     features: [
       "Ateliers communautaires",
       "Programmes scolaires",
@@ -65,6 +75,7 @@ const services = [
     description:
       "Services de nettoyage et maintenance pour les publics et les privés, assurant des environnements sains et durables. Nos équipes utilisent des produits écologiques.",
     icon: Sparkles,
+    image: sustainabilityImg,
     features: [
       "Plannings de nettoyage réguliers",
       "Services de désinfection approfondie",
@@ -79,6 +90,7 @@ const services = [
     description:
       "Solutions complètes pour la collecte, le tri, et la valorisation des déchets ménagers. Nous appliquons les principes de l'économie circulaire.",
     icon: Recycle,
+    image: engineerImg,
     features: [
       "Systèmes de collecte des déchets",
       "Tri et recyclage",
@@ -110,140 +122,191 @@ const processSteps = [
 export default function Services() {
   return (
     <Layout>
-      {/* Hero */}
-      <section className="pt-32 pb-20 hero-gradient">
-        <div className="section-container">
+      {/* Hero éditorial avec image immersive */}
+      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+        <ParallaxImage
+          src={infrastructureImg}
+          alt="Infrastructure d'assainissement moderne"
+          className="absolute inset-0"
+          speed={0.2}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background" />
+
+        <div className="relative section-container">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl"
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl"
           >
-            <span className="inline-block px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
-              Ce Que Nous Offrons
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-medium uppercase tracking-widest rounded-full bg-background/60 backdrop-blur-md border border-border/40 text-foreground">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              Ce que nous offrons
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6">
-              Services d'<span className="gradient-text">Assainissement</span> Complets
+            <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-heading font-bold text-foreground tracking-[-0.03em] leading-[0.95] mb-8">
+              Services d'<span className="gradient-text italic font-light">assainissement</span>
+              <br />
+              complets et sur-mesure.
             </h1>
-            <p className="text-lg text-muted-foreground">
-              De la construction d'infrastructures à la formation communautaire, nous
-              offrons des solutions de bout en bout qui créent un impact positif
-              durable sur la santé publique et la durabilité environnementale.
+            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+              De la construction d'infrastructures à la formation communautaire,
+              nous offrons des solutions de bout en bout qui créent un impact
+              positif durable sur la santé publique.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="py-24">
-        <div className="section-container space-y-24">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.id}
-              id={service.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className={`grid lg:grid-cols-2 gap-12 items-center ${
-                index % 2 === 1 ? "lg:flex-row-reverse" : ""
-              }`}
-            >
-              <div className={index % 2 === 1 ? "lg:order-2" : ""}>
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 mb-6">
-                  <service.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h2 className="text-3xl font-bold text-foreground mb-4">
-                  {service.title}
-                </h2>
-                <p className="text-muted-foreground mb-8">
-                  {service.description}
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {service.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-                      <span className="text-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button asChild>
-                  <Link to="/contact">
-                    Demander un Devis
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
+      {/* Services en alternance avec vraies images */}
+      <section className="py-24 lg:py-32">
+        <div className="section-container space-y-28 lg:space-y-40">
+          {services.map((service, index) => {
+            const reversed = index % 2 === 1;
+            return (
+              <div
+                key={service.id}
+                id={service.id}
+                className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center"
+              >
+                <ScrollReveal
+                  direction={reversed ? "right" : "left"}
+                  className={`lg:col-span-6 ${reversed ? "lg:order-2" : ""}`}
+                >
+                  <div className="relative">
+                    <ParallaxImage
+                      src={service.image}
+                      alt={service.title}
+                      className="aspect-[4/5] rounded-3xl shadow-xl"
+                      speed={0.12}
+                    />
+                    {/* Decorative number */}
+                    <div
+                      className={`absolute -top-6 ${reversed ? "-right-4" : "-left-4"} w-16 h-16 rounded-2xl bg-background border border-border/60 shadow-lg flex items-center justify-center`}
+                    >
+                      <span className="text-2xl font-heading font-bold gradient-text">
+                        0{index + 1}
+                      </span>
+                    </div>
+                  </div>
+                </ScrollReveal>
+
+                <ScrollReveal
+                  direction={reversed ? "left" : "right"}
+                  delay={0.1}
+                  className={`lg:col-span-6 ${reversed ? "lg:order-1" : ""}`}
+                >
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/15 mb-6">
+                    <service.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-foreground tracking-tight mb-5 leading-[1.1]">
+                    {service.title}
+                  </h2>
+                  <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                    {service.description}
+                  </p>
+                  <ul className="space-y-3 mb-8">
+                    {service.features.map((feature, i) => (
+                      <motion.li
+                        key={feature}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.05 * i }}
+                        className="flex items-center gap-3"
+                      >
+                        <div className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
+                          <CheckCircle className="w-3.5 h-3.5 text-accent" />
+                        </div>
+                        <span className="text-foreground">{feature}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <Magnetic strength={0.18}>
+                    <Button asChild>
+                      <Link to="/contact">
+                        Demander un devis
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </Magnetic>
+                </ScrollReveal>
               </div>
-              <div className={index % 2 === 1 ? "lg:order-1" : ""}>
-                <div className="glass-card p-8 lg:p-12 aspect-square flex items-center justify-center">
-                  <service.icon className="w-32 h-32 text-primary/20" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
       {/* Process Section */}
-      <section className="py-24 bg-muted/30">
+      <section className="relative py-24 lg:py-32 bg-muted/30 overflow-hidden">
         <div className="section-container">
-          <SectionHeading
-            badge="Notre Processus"
-            title="Comment Nous Travaillons"
-            description="Une méthodologie éprouvée qui garantit des résultats de qualité et la satisfaction client."
-          />
+          <ScrollReveal>
+            <span className="inline-block text-xs font-medium uppercase tracking-widest text-accent mb-4">
+              — Notre Processus
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-[1.05] mb-4">
+              Comment nous <span className="gradient-text italic font-light">travaillons</span>.
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl">
+              Une méthodologie éprouvée qui garantit des résultats de qualité et
+              la satisfaction de chaque partenaire.
+            </p>
+          </ScrollReveal>
 
-          <div className="mt-16 grid md:grid-cols-3 gap-8">
+          <div className="mt-16 grid md:grid-cols-3 gap-6 lg:gap-8 relative">
+            {/* Connecting line */}
+            <div className="hidden md:block absolute top-12 left-[16.66%] right-[16.66%] h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
             {processSteps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative text-center"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
-                  <step.icon className="w-8 h-8 text-primary" />
+              <ScrollReveal key={step.title} delay={index * 0.12}>
+                <div className="relative text-center p-8 rounded-3xl bg-background border border-border/50 hover:border-primary/40 hover:shadow-lg transition-all duration-300">
+                  <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 mb-6">
+                    <step.icon className="w-9 h-9 text-primary" />
+                    <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shadow-md">
+                      {index + 1}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-heading font-semibold text-foreground mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-muted-foreground">{step.description}</p>
                 </div>
-                <div className="absolute top-8 left-1/2 w-full h-px bg-border hidden md:block" />
-                <span className="absolute top-6 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
-                  {index + 1}
-                </span>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground">{step.description}</p>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24">
-        <div className="section-container text-center">
-          <h2 className="text-3xl font-bold text-foreground mb-6">
-            Prêt à Commencer ?
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-            Contactez-nous aujourd'hui pour discuter de votre projet et découvrir
-            comment nous pouvons aider à créer un environnement plus propre et
-            plus sain pour votre communauté.
-          </p>
-          <Button asChild size="lg" className="shadow-glow">
-            <Link to="/contact">
-              Nous Contacter
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* Footer Note */}
-      <section className="pb-12">
+      <section className="py-24 lg:py-32">
         <div className="section-container">
-          <p className="text-center text-sm text-muted-foreground italic">
-            * Nos services sont personnalisables selon les besoins spécifiques de votre organisation ou communauté.
+          <ScrollReveal direction="scale">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-12 lg:p-16 text-center">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,white_0%,transparent_50%)]" />
+              </div>
+              <div className="relative max-w-2xl mx-auto">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-primary-foreground mb-6 leading-tight">
+                  Prêt à commencer votre projet ?
+                </h2>
+                <p className="text-primary-foreground/85 text-lg mb-8">
+                  Discutons de votre vision et créons ensemble des solutions
+                  d'assainissement adaptées à votre communauté.
+                </p>
+                <Magnetic strength={0.2}>
+                  <Button asChild size="lg" variant="secondary" className="px-8 h-12">
+                    <Link to="/contact">
+                      Nous contacter
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
+                  </Button>
+                </Magnetic>
+              </div>
+            </div>
+          </ScrollReveal>
+          <p className="text-center text-sm text-muted-foreground italic mt-8">
+            * Nos services sont personnalisables selon les besoins spécifiques
+            de votre organisation ou communauté.
           </p>
         </div>
       </section>
