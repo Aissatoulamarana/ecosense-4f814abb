@@ -51,20 +51,6 @@ export function Header() {
           <Link
             to="/"
             className="flex items-center gap-2 group select-none"
-            onClick={(e) => {
-              clickCountRef.current += 1;
-              if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-              if (clickCountRef.current >= 3) {
-                e.preventDefault();
-                clickCountRef.current = 0;
-                toast.success("Accès administrateur", { duration: 1500 });
-                navigate("/admin/login");
-                return;
-              }
-              clickTimerRef.current = setTimeout(() => {
-                clickCountRef.current = 0;
-              }, 600);
-            }}
           >
             <img
               src={logoEcosense}
