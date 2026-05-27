@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Phone, MapPin, Clock, Mail, Globe } from "lucide-react";
+import { Phone, MapPin, Clock, Mail, Globe, Facebook, Linkedin, Instagram, Twitter } from "lucide-react";
 import logoEcosense from "@/assets/logo-ecosense.jpg";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const footerLinks = {
   company: [
@@ -21,28 +22,25 @@ const footerLinks = {
   ],
 };
 
-const contactInfo = [
-  {
-    icon: Phone,
-    label: "WhatsApp",
-    value: "+224 625 71 84 67",
-    href: "https://wa.me/224625718467",
-  },
-  {
-    icon: MapPin,
-    label: "Adresse",
-    value: "Lambanyi, Conakry, Guinée",
-    href: "#",
-  },
-  {
-    icon: Clock,
-    label: "Heures",
-    value: "09:00 – 17:00",
-    href: "#",
-  },
-];
-
 export function Footer() {
+  const { settings } = useSiteSettings();
+  const b = settings.brand;
+
+  const contactInfo = [
+    { icon: Phone, label: "WhatsApp", value: b.phone, href: b.whatsapp || `tel:${b.phone}` },
+    { icon: MapPin, label: "Adresse", value: b.address, href: "#" },
+    { icon: Clock, label: "Heures", value: b.hours, href: "#" },
+  ];
+
+  const socials = [
+    { icon: Facebook, href: b.facebook_url },
+    { icon: Linkedin, href: b.linkedin_url },
+    { icon: Instagram, href: b.instagram_url },
+    { icon: Twitter, href: b.twitter_url },
+  ].filter((s) => s.href);
+
+  const websiteDisplay = (b.website || "").replace(/^https?:\/\//, "");
+
   return (
     <footer className="bg-foreground/[0.02] border-t border-border">
       <div className="section-container py-16 lg:py-20">
@@ -51,15 +49,13 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 group mb-4">
               <img
-                src={logoEcosense}
-                alt="Ecosense Solutions"
+                src={b.logo_url || logoEcosense}
+                alt={b.site_name}
                 className="h-10 w-auto"
               />
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm mb-6">
-              Innover pour un avenir plus propre et plus sain grâce à des 
-              solutions d'assainissement et d'hygiène durables pour les 
-              communautés à travers la Guinée.
+              {b.tagline}
             </p>
             <div className="space-y-3">
               {contactInfo.map((item) => (
@@ -73,6 +69,21 @@ export function Footer() {
                 </a>
               ))}
             </div>
+            {socials.length > 0 && (
+              <div className="flex items-center gap-3 mt-6">
+                {socials.map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                  >
+                    <s.icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Links Columns */}
@@ -119,26 +130,30 @@ export function Footer() {
                   Nous Contacter
                 </Link>
               </li>
-              <li>
-                <a
-                  href="mailto:contact@ecosensesolutions.co"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  contact@ecosensesolutions.co
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.ecosensesolutions.co"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
-                >
-                  <Globe className="w-4 h-4" />
-                  www.ecosensesolutions.co
-                </a>
-              </li>
+              {b.email && (
+                <li>
+                  <a
+                    href={`mailto:${b.email}`}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                  >
+                    <Mail className="w-4 h-4" />
+                    {b.email}
+                  </a>
+                </li>
+              )}
+              {b.website && (
+                <li>
+                  <a
+                    href={b.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                  >
+                    <Globe className="w-4 h-4" />
+                    {websiteDisplay}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -146,7 +161,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Ecosense Solutions. Tous droits réservés.
+            © {new Date().getFullYear()} {b.site_name}. Tous droits réservés.
           </p>
           <div className="flex items-center gap-6">
             {footerLinks.legal.map((link) => (

@@ -366,10 +366,19 @@ export default function AdminSettings() {
               <Input
                 className="pl-10"
                 value={brand.phone}
-                onChange={(e) =>
-                  setBrand((p) => ({ ...p, phone: e.target.value }))
-                }
+                onChange={(e) => setBrand((p) => ({ ...p, phone: e.target.value }))}
                 placeholder="+224 xxx xxx xxx"
+              />
+            </div>
+          </FieldRow>
+          <FieldRow label="WhatsApp" description="Lien complet (https://wa.me/...)">
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                className="pl-10"
+                value={brand.whatsapp}
+                onChange={(e) => setBrand((p) => ({ ...p, whatsapp: e.target.value }))}
+                placeholder="https://wa.me/224625718467"
               />
             </div>
           </FieldRow>
@@ -379,28 +388,39 @@ export default function AdminSettings() {
               <Input
                 className="pl-10"
                 value={brand.email}
-                onChange={(e) =>
-                  setBrand((p) => ({ ...p, email: e.target.value }))
-                }
+                onChange={(e) => setBrand((p) => ({ ...p, email: e.target.value }))}
                 placeholder="contact@..."
               />
             </div>
           </FieldRow>
-          <FieldRow
-            label="Adresse"
-            description="Affichée dans le footer / contact"
-          >
+          <FieldRow label="Site web" description="URL publique du site">
+            <div className="relative">
+              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                className="pl-10"
+                value={brand.website}
+                onChange={(e) => setBrand((p) => ({ ...p, website: e.target.value }))}
+                placeholder="https://www.ecosensesolutions.co"
+              />
+            </div>
+          </FieldRow>
+          <FieldRow label="Adresse" description="Affichée dans le footer / contact">
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 className="pl-10"
                 value={brand.address}
-                onChange={(e) =>
-                  setBrand((p) => ({ ...p, address: e.target.value }))
-                }
-                placeholder="Conakry, Guinée"
+                onChange={(e) => setBrand((p) => ({ ...p, address: e.target.value }))}
+                placeholder="Lambanyi, Conakry, Guinée"
               />
             </div>
+          </FieldRow>
+          <FieldRow label="Horaires" description="Jours et heures d'ouverture">
+            <Input
+              value={brand.hours}
+              onChange={(e) => setBrand((p) => ({ ...p, hours: e.target.value }))}
+              placeholder="Lundi – Vendredi : 09:00 – 17:00"
+            />
           </FieldRow>
         </div>
       </section>
@@ -750,97 +770,79 @@ export default function AdminSettings() {
 
   return (
     <AdminLayout>
-      {/* <div className="min-h-screen bg-muted/30"> */}
-      {/* Header */}
-      <div className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-1.5 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-heading font-bold text-foreground">
-              Paramètres du site
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Personnalisez l'apparence et les informations de votre site
-            </p>
-          </div>
-          <Button
-            onClick={() => handleSave(activeTab)}
-            disabled={saving === activeTab}
-            className="gap-2 shadow-sm"
-          >
-            {saving === activeTab ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" /> Sauvegarde...
-              </>
-            ) : savedGroup === activeTab ? (
-              <>
-                <CheckCircle2 className="w-4 h-4" /> Sauvegardé !
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" /> Sauvegarder
-              </>
-            )}
-          </Button>
+      <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <span className="inline-block px-4 py-1.5 mb-4 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+            Configuration
+          </span>
+          <h1 className="text-3xl font-heading font-bold text-foreground">
+            Paramètres du <span className="gradient-text">site</span>
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Personnalisez l'apparence et les informations affichées sur le site public.
+          </p>
         </div>
+        <Button
+          onClick={() => handleSave(activeTab)}
+          disabled={saving === activeTab}
+          className="gap-2 shadow-sm"
+        >
+          {saving === activeTab ? (
+            <><RefreshCw className="w-4 h-4 animate-spin" /> Sauvegarde...</>
+          ) : savedGroup === activeTab ? (
+            <><CheckCircle2 className="w-4 h-4" /> Sauvegardé !</>
+          ) : (
+            <><Save className="w-4 h-4" /> Sauvegarder</>
+          )}
+        </Button>
+      </div>
 
-        {/* Tabs */}
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="flex gap-1">
-            {TABS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === id
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Tabs */}
+      <div className="premium-card p-2 mb-6 inline-flex flex-wrap gap-1">
+        {TABS.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              activeTab === id
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+            }`}
+          >
+            <Icon className="w-4 h-4" />
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="bg-background rounded-2xl border border-border p-6 md:p-8 shadow-sm"
-          >
-            {tabContent[activeTab]}
-          </motion.div>
-        </AnimatePresence>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+          className="premium-card p-6 md:p-8"
+        >
+          {tabContent[activeTab]}
+        </motion.div>
+      </AnimatePresence>
 
-        {/* Save bottom */}
-        <div className="mt-6 flex justify-end">
-          <Button
-            size="lg"
-            onClick={() => handleSave(activeTab)}
-            disabled={saving === activeTab}
-            className="gap-2 px-8 shadow-md"
-          >
-            {saving === activeTab ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" /> Sauvegarde en
-                cours...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" /> Sauvegarder les modifications
-              </>
-            )}
-          </Button>
-        </div>
+      <div className="mt-6 flex justify-end">
+        <Button
+          size="lg"
+          onClick={() => handleSave(activeTab)}
+          disabled={saving === activeTab}
+          className="gap-2 px-8 shadow-md"
+        >
+          {saving === activeTab ? (
+            <><RefreshCw className="w-4 h-4 animate-spin" /> Sauvegarde en cours...</>
+          ) : (
+            <><Save className="w-4 h-4" /> Sauvegarder les modifications</>
+          )}
+        </Button>
       </div>
-      {/* </div> */}
     </AdminLayout>
   );
 }

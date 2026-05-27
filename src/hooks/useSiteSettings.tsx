@@ -13,8 +13,11 @@ export interface BrandSettings {
   logo_url: string;
   favicon_url: string;
   phone: string;
+  whatsapp: string;
   email: string;
   address: string;
+  hours: string;
+  website: string;
   facebook_url: string;
   linkedin_url: string;
   instagram_url: string;
@@ -54,9 +57,12 @@ const defaultSettings: SiteSettings = {
     tagline: "Solutions durables pour un avenir meilleur",
     logo_url: "",
     favicon_url: "",
-    phone: "+224 000 000 000",
+    phone: "+224 625 71 84 67",
+    whatsapp: "https://wa.me/224625718467",
     email: "contact@ecosensesolutions.co",
-    address: "Conakry, Guinée",
+    address: "Lambanyi, Conakry, Guinée",
+    hours: "Lundi – Vendredi : 09:00 – 17:00",
+    website: "https://www.ecosensesolutions.co",
     facebook_url: "",
     linkedin_url: "",
     instagram_url: "",
