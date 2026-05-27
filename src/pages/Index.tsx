@@ -116,7 +116,17 @@ const Index = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [hero, setHero] = useState<HomeSection | null>(null);
-  const [stats, setStats] = useState([]);
+  const [stats, setStats] = useState([
+    { value: "150+", suffix: "", label: "Projets réalisés" },
+    { value: "2.5M", suffix: "+", label: "Personnes impactées" },
+    { value: "45", suffix: "+", label: "Communautés accompagnées" },
+    { value: "98", suffix: "%", label: "Taux de satisfaction" },
+  ]);
+
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
+  const heroScale = useTransform(scrollY, [0, 500], [1, 1.15]);
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
 
   const fetchPosts = async () => {
     const { data } = await supabase
