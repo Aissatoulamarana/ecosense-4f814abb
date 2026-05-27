@@ -118,8 +118,8 @@ const Index = () => {
   const [hero, setHero] = useState<HomeSection | null>(null);
   const [stats, setStats] = useState([]);
 
-  useEffect(() => {
-    supabase
+  const fetchPosts = async () => {
+    const { data } = await supabase
       .from("blog_posts")
       .select("*")
       .eq("status", "published")
