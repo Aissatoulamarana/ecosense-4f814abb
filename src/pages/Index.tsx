@@ -176,7 +176,7 @@ const Index = () => {
           className="absolute inset-0"
         >
           <img
-            src={hero?.image_url || heroBg}
+            src={hero?.image_url || heroCommunity}
             alt={hero?.title || "Communauté durable"}
             className="w-full h-full object-cover"
           />
