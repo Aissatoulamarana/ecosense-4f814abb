@@ -344,7 +344,7 @@ export default function Contact() {
               className="bg-[#25D366] hover:bg-[#128C7E] shadow-lg"
             >
               <a
-                href="https://wa.me/224625718467"
+                href={b.whatsapp || `tel:${b.phone}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
