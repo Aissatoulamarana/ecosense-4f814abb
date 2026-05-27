@@ -28,30 +28,8 @@ import { Magnetic } from "@/components/ui/magnetic-button";
 import { ParallaxImage } from "@/components/ui/parallax-image";
 import contactOffice from "@/assets/2026-contact-office.jpg";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const contactInfo = [
-  {
-    icon: Phone,
-    title: "WhatsApp",
-    value: "+224 625 71 84 67",
-    href: "https://wa.me/224625718467",
-    action: "Discuter avec nous",
-  },
-  {
-    icon: MapPin,
-    title: "Adresse",
-    value: "Lambanyi, Conakry, Guinée",
-    href: "#map",
-    action: "Voir sur la carte",
-  },
-  {
-    icon: Clock,
-    title: "Heures d'Ouverture",
-    value: "Lundi – Vendredi : 09:00 – 17:00",
-    href: null,
-    action: null,
-  },
-];
 
 const contactSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
