@@ -366,10 +366,19 @@ export default function AdminSettings() {
               <Input
                 className="pl-10"
                 value={brand.phone}
-                onChange={(e) =>
-                  setBrand((p) => ({ ...p, phone: e.target.value }))
-                }
+                onChange={(e) => setBrand((p) => ({ ...p, phone: e.target.value }))}
                 placeholder="+224 xxx xxx xxx"
+              />
+            </div>
+          </FieldRow>
+          <FieldRow label="WhatsApp" description="Lien complet (https://wa.me/...)">
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                className="pl-10"
+                value={brand.whatsapp}
+                onChange={(e) => setBrand((p) => ({ ...p, whatsapp: e.target.value }))}
+                placeholder="https://wa.me/224625718467"
               />
             </div>
           </FieldRow>
@@ -379,28 +388,39 @@ export default function AdminSettings() {
               <Input
                 className="pl-10"
                 value={brand.email}
-                onChange={(e) =>
-                  setBrand((p) => ({ ...p, email: e.target.value }))
-                }
+                onChange={(e) => setBrand((p) => ({ ...p, email: e.target.value }))}
                 placeholder="contact@..."
               />
             </div>
           </FieldRow>
-          <FieldRow
-            label="Adresse"
-            description="Affichée dans le footer / contact"
-          >
+          <FieldRow label="Site web" description="URL publique du site">
+            <div className="relative">
+              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                className="pl-10"
+                value={brand.website}
+                onChange={(e) => setBrand((p) => ({ ...p, website: e.target.value }))}
+                placeholder="https://www.ecosensesolutions.co"
+              />
+            </div>
+          </FieldRow>
+          <FieldRow label="Adresse" description="Affichée dans le footer / contact">
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 className="pl-10"
                 value={brand.address}
-                onChange={(e) =>
-                  setBrand((p) => ({ ...p, address: e.target.value }))
-                }
-                placeholder="Conakry, Guinée"
+                onChange={(e) => setBrand((p) => ({ ...p, address: e.target.value }))}
+                placeholder="Lambanyi, Conakry, Guinée"
               />
             </div>
+          </FieldRow>
+          <FieldRow label="Horaires" description="Jours et heures d'ouverture">
+            <Input
+              value={brand.hours}
+              onChange={(e) => setBrand((p) => ({ ...p, hours: e.target.value }))}
+              placeholder="Lundi – Vendredi : 09:00 – 17:00"
+            />
           </FieldRow>
         </div>
       </section>
