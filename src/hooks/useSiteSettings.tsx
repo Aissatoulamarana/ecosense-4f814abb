@@ -13,8 +13,11 @@ export interface BrandSettings {
   logo_url: string;
   favicon_url: string;
   phone: string;
+  whatsapp: string;
   email: string;
   address: string;
+  hours: string;
+  website: string;
   facebook_url: string;
   linkedin_url: string;
   instagram_url: string;
