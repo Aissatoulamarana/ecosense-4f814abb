@@ -42,6 +42,13 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const { settings } = useSiteSettings();
+  const b = settings.brand;
+  const contactInfo = [
+    { icon: Phone, title: "WhatsApp", value: b.phone, href: b.whatsapp || `tel:${b.phone}`, action: "Discuter avec nous" },
+    { icon: MapPin, title: "Adresse", value: b.address, href: "#map", action: "Voir sur la carte" },
+    { icon: Clock, title: "Heures d'Ouverture", value: b.hours, href: null as string | null, action: null as string | null },
+  ];
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
