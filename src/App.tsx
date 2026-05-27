@@ -50,6 +50,7 @@ const App = () => (
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
       >
         <AuthProvider>
+          <SiteSettingsProvider>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
