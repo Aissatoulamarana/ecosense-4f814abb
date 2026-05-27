@@ -261,7 +261,8 @@ const Index = () => {
               <Magnetic strength={0.2}>
                 <Button asChild variant="outline" size="lg" className="px-8 h-12 text-base backdrop-blur-md bg-background/40">
                   <Link to={hero?.secondary_button_link}>
-                  {hero?.secondary_button_text}
+                    {hero?.secondary_button_text}
+                  </Link>
                 </Button>
               </Magnetic>
 
