@@ -151,13 +151,13 @@ const Index = () => {
   };
 
   const fetchStats = async () => {
-    const { data, error } = await supabase
-      .from("homepage_stats")
-      .select("*")
-      .eq("is_active", true)
-      .order("display_order", { ascending: true });
-
-    setStats(data || []);
+    // Table homepage_stats non définie dans le schéma — stats en dur pour l'instant
+    // const { data, error } = await supabase
+    //   .from("homepage_stats" as any)
+    //   .select("*")
+    //   .eq("is_active", true)
+    //   .order("display_order", { ascending: true });
+    // setStats((data as any) || []);
   };
 
   useEffect(() => {
