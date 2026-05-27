@@ -53,13 +53,6 @@ interface HomeSection {
   is_active: boolean;
 }
 
-// FIX 6 — Type de stat correctement défini
-interface HomeStat {
-  label: string;
-  value: string;
-  suffix?: string;
-}
-
 const services = [
   {
     title: "Solutions Technologiques",
@@ -105,14 +98,12 @@ const values = [
   {
     icon: Leaf,
     title: "Durabilité",
-    description:
-      "Responsabilité environnementale dans chaque solution proposée.",
+    description: "Responsabilité environnementale dans chaque solution proposée.",
   },
   {
     icon: Heart,
     title: "Communauté d'abord",
-    description:
-      "Les besoins des communautés au cœur de notre travail quotidien.",
+    description: "Les besoins des communautés au cœur de notre travail quotidien.",
   },
   {
     icon: TrendingUp,
@@ -125,18 +116,10 @@ const Index = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [hero, setHero] = useState<HomeSection | null>(null);
-  // FIX 6 — Typage correct du state stats
-  const [stats, setStats] = useState<HomeStat[]>([]);
+  const [stats, setStats] = useState([]);
 
-  // FIX 2 — Déclaration des variables de scroll (heroY, heroScale, heroOpacity)
-  const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, 180]);
-  const heroScale = useTransform(scrollY, [0, 600], [1, 1.12]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-
-  // FIX 1 — fetchPosts correctement défini avec await et récupération de `data`
-  const fetchPosts = async () => {
-    const { data } = await supabase
+  useEffect(() => {
+    supabase
       .from("blog_posts")
       .select("*")
       .eq("status", "published")
@@ -158,7 +141,7 @@ const Index = () => {
   };
 
   const fetchStats = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("homepage_stats")
       .select("*")
       .eq("is_active", true)
@@ -167,7 +150,6 @@ const Index = () => {
     setStats(data || []);
   };
 
-  // FIX 5 — useEffect correctement fermé avec }, [])
   useEffect(() => {
     fetchPosts();
     fetchHero();
@@ -183,9 +165,8 @@ const Index = () => {
           style={{ y: heroY, scale: heroScale }}
           className="absolute inset-0"
         >
-          {/* FIX 3 — heroBg remplacé par heroCommunity (import existant) */}
           <img
-            src={hero?.image_url || heroCommunity}
+            src={hero?.image_url || heroBg}
             alt={hero?.title || "Communauté durable"}
             className="w-full h-full object-cover"
           />
@@ -200,10 +181,7 @@ const Index = () => {
               key={i}
               className="absolute w-[28rem] h-[28rem] rounded-full blur-3xl"
               style={{
-                background:
-                  i % 2
-                    ? "hsl(var(--accent) / 0.08)"
-                    : "hsl(var(--primary) / 0.08)",
+                background: i % 2 ? "hsl(var(--accent) / 0.08)" : "hsl(var(--primary) / 0.08)",
                 left: `${10 + i * 22}%`,
                 top: `${15 + (i % 2) * 30}%`,
               }}
@@ -212,11 +190,7 @@ const Index = () => {
                 y: [0, -40, 0],
                 scale: [1, 1.15, 1],
               }}
-              transition={{
-                duration: 12 + i * 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              transition={{ duration: 12 + i * 2, repeat: Infinity, ease: "easeInOut" }}
             />
           ))}
         </div>
@@ -233,8 +207,16 @@ const Index = () => {
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-medium tracking-wider uppercase rounded-full bg-background/60 backdrop-blur-md border border-border/40 text-foreground"
             >
+
+             
+           
+
+           
+
+           
+
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              {hero?.subtitle}
+         {hero?.subtitle}
             </motion.span>
 
             <motion.h1
@@ -243,11 +225,9 @@ const Index = () => {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-[clamp(2.5rem,7vw,5.5rem)] font-heading font-bold text-foreground tracking-[-0.03em] leading-[0.95] mb-8"
             >
-              {hero?.title}
+                  {hero?.title}
               <br />
-              <span className="gradient-text italic font-light">
-                plus propre
-              </span>
+              <span className="gradient-text italic font-light">plus propre</span>
               <span className="text-foreground">, plus </span>
               <span className="gradient-text italic font-light">sain</span>
               <span className="text-foreground">.</span>
@@ -259,8 +239,9 @@ const Index = () => {
               transition={{ delay: 0.4 }}
               className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed"
             >
-              {hero?.description}
+                  {hero?.description}
             </motion.p>
+
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -268,31 +249,22 @@ const Index = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-wrap items-center gap-4"
             >
+
               <Magnetic strength={0.2}>
-                <Button
-                  asChild
-                  size="lg"
-                  className="px-8 h-12 text-base shadow-glow group"
-                >
-                  <Link to={hero?.button_link ?? "/"}>
-                    {hero?.button_text}
+                <Button asChild size="lg" className="px-8 h-12 text-base shadow-glow group">
+                  <Link to={hero?.button_link}>
+                  {hero?.button_text}
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
               </Magnetic>
               <Magnetic strength={0.2}>
-                {/* FIX 4 — Balise </Link> manquante ajoutée */}
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="px-8 h-12 text-base backdrop-blur-md bg-background/40"
-                >
-                  <Link to={hero?.secondary_button_link ?? "/"}>
-                    {hero?.secondary_button_text}
-                  </Link>
+                <Button asChild variant="outline" size="lg" className="px-8 h-12 text-base backdrop-blur-md bg-background/40">
+                  <Link to={hero?.secondary_button_link}>
+                  {hero?.secondary_button_text}
                 </Button>
               </Magnetic>
+
             </motion.div>
           </div>
 
@@ -357,11 +329,7 @@ const Index = () => {
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold text-foreground tracking-tight leading-[1.05]">
                 Des solutions complètes
                 <br />
-                pour{" "}
-                <span className="gradient-text italic font-light">
-                  chaque défi
-                </span>
-                .
+                pour <span className="gradient-text italic font-light">chaque défi</span>.
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={0.15} className="lg:col-span-5">
@@ -439,9 +407,7 @@ const Index = () => {
                   <h3 className="text-lg font-heading font-bold text-foreground mb-2">
                     {services[3].title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {services[3].description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{services[3].description}</p>
                   <ArrowUpRight className="absolute top-6 right-6 w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                 </Link>
               </TiltCard>
@@ -480,9 +446,7 @@ const Index = () => {
                   <h3 className="text-lg font-heading font-bold text-foreground mb-2">
                     {services[4].title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {services[4].description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{services[4].description}</p>
                   <ArrowUpRight className="absolute top-6 right-6 w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                 </Link>
               </TiltCard>
@@ -523,10 +487,7 @@ const Index = () => {
                 <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight leading-[1.05] mb-6">
                   Fondés sur des valeurs
                   <br />
-                  <span className="gradient-text italic font-light">
-                    qui comptent
-                  </span>
-                  .
+                  <span className="gradient-text italic font-light">qui comptent</span>.
                 </h2>
                 <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
                   Notre engagement envers la durabilité, l'innovation et le
@@ -579,8 +540,8 @@ const Index = () => {
                 — Notre Mission
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-foreground mb-6 leading-tight">
-                Construire un avenir où chaque communauté a accès à l'
-                <span className="gradient-text">assainissement digne</span>.
+                Construire un avenir où chaque communauté a accès à
+                l'<span className="gradient-text">assainissement digne</span>.
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
                 Chez Ecosense Solutions, nous concevons et déployons des
@@ -626,17 +587,11 @@ const Index = () => {
                     Construisons ensemble un impact qui dure.
                   </h2>
                   <p className="text-primary-foreground/85 text-lg mb-8">
-                    ONG, organismes gouvernementaux ou entreprises :
-                    rejoignez-nous pour transformer durablement la santé
-                    publique.
+                    ONG, organismes gouvernementaux ou entreprises : rejoignez-nous
+                    pour transformer durablement la santé publique.
                   </p>
                   <Magnetic strength={0.2}>
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="secondary"
-                      className="px-8 h-12"
-                    >
+                    <Button asChild size="lg" variant="secondary" className="px-8 h-12">
                       <Link to="/partnership">
                         Explorer le partenariat
                         <ArrowRight className="w-5 h-5 ml-2" />
@@ -682,11 +637,7 @@ const Index = () => {
                   — Dernières actualités
                 </span>
                 <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight">
-                  Notre{" "}
-                  <span className="gradient-text italic font-light">
-                    journal
-                  </span>
-                  .
+                  Notre <span className="gradient-text italic font-light">journal</span>.
                 </h2>
               </ScrollReveal>
               <ScrollReveal delay={0.1}>
@@ -719,14 +670,11 @@ const Index = () => {
                     <div className="p-6">
                       <time className="text-xs text-muted-foreground uppercase tracking-wider">
                         {post.published_at &&
-                          new Date(post.published_at).toLocaleDateString(
-                            "fr-FR",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            },
-                          )}
+                          new Date(post.published_at).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
                       </time>
                       <h3 className="text-lg font-heading font-semibold text-foreground mt-3 mb-3 group-hover:text-primary transition-colors line-clamp-2">
                         {post.title}
