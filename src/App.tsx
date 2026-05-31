@@ -20,6 +20,8 @@ import AdminMessages from "./pages/admin/AdminMessages";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminContact from "./pages/admin/AdminContact";
+import AdminServices from "./pages/admin/AdminServices";
+import AdminPartners from "./pages/admin/AdminPartners";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +75,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AdminBlog />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/services"
+              element={
+                <ProtectedRoute>
+                  <AdminServices />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/partners"
+              element={
+                <ProtectedRoute>
+                  <AdminPartners />
                 </ProtectedRoute>
               }
             />

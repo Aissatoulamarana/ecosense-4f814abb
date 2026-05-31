@@ -47,7 +47,11 @@ export default function Blog() {
 
   const formatDate = (post: BlogPost) => {
     const date = post.published_at ?? post.created_at;
-    return new Date(date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    return new Date(date).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
   };
 
   const estimateReadTime = (content: string | null) => {
@@ -58,8 +62,8 @@ export default function Blog() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="pt-32 pb-16 hero-gradient">
-        <div className="section-container">
+      <section className="pt-32 pb-16 flex items-center justify-center hero-gradient">
+        <div className="section-container text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -72,8 +76,9 @@ export default function Blog() {
               Actualités & <span className="gradient-text">Connaissances</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Restez informé des dernières nouvelles sur l'assainissement durable,
-              le développement communautaire et l'innovation en santé publique.
+              Restez informé des dernières nouvelles sur l'assainissement
+              durable, le développement communautaire et l'innovation en santé
+              publique.
             </p>
           </motion.div>
         </div>

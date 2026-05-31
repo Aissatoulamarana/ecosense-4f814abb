@@ -49,6 +49,7 @@ export default function AdminBlog() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [saving, setSaving] = useState(false);
   
   const [form, setForm] = useState({
     title: "",
@@ -134,9 +135,10 @@ export default function AdminBlog() {
       return;
     }
 
-    const slug = form.slug || generateSlug(form.title);
+    setSaving(true);
+    const slug = form.slug.trim() || generateSlug(form.title);
     const payload = {
-      title: form.title,
+      title: form.title.trim(),
       slug,
       excerpt: form.excerpt || null,
       content: form.content || null,
@@ -145,14 +147,17 @@ export default function AdminBlog() {
       read_time: form.read_time || estimateReadTime(form.content),
       status: form.status,
       published_at:
-        form.status === "published" ? new Date().toISOString() : null,
+        form.status === "published"
+          ? editing?.published_at ?? new Date().toISOString()
+          : null,
       author_id: user?.id,
     };
 
     if (isNew) {
       const { error } = await supabase.from("blog_posts").insert(payload);
       if (error) {
-        toast.error("Erreur lors de la création");
+        toast.error(error.message || "Erreur lors de la création");
+        setSaving(false);
         return;
       }
       toast.success("Article créé !");
@@ -162,32 +167,44 @@ export default function AdminBlog() {
         .update(payload)
         .eq("id", editing.id);
       if (error) {
-        toast.error("Erreur lors de la mise à jour");
+        toast.error(error.message || "Erreur lors de la mise à jour");
+        setSaving(false);
         return;
       }
       toast.success("Article mis à jour !");
     }
+    setSaving(false);
     closeForm();
     fetchPosts();
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Supprimer cet article définitivement ?")) return;
-    await supabase.from("blog_posts").delete().eq("id", id);
+    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+    if (error) {
+      toast.error(error.message || "Erreur lors de la suppression");
+      return;
+    }
     toast.success("Article supprimé");
     fetchPosts();
   };
 
   const toggleStatus = async (post: BlogPost) => {
     const newStatus = post.status === "published" ? "draft" : "published";
-    await supabase
+    const { error } = await supabase
       .from("blog_posts")
       .update({
         status: newStatus,
         published_at:
-          newStatus === "published" ? new Date().toISOString() : null,
+          newStatus === "published"
+            ? post.published_at ?? new Date().toISOString()
+            : null,
       })
       .eq("id", post.id);
+    if (error) {
+      toast.error(error.message || "Erreur lors du changement de statut");
+      return;
+    }
     fetchPosts();
   };
 
@@ -360,10 +377,36 @@ export default function AdminBlog() {
                 section="blog"
                 onChange={(url) => setForm({ ...form, cover_image_url: url })}
               />
-              <Button onClick={handleSave} className="w-full shadow-glow">
-                {form.status === "published"
-                  ? "Publier l'article"
-                  : "Sauvegarder le brouillon"}
+
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
+                  Aperçu carte
+                </p>
+                {form.cover_image_url && (
+                  <img
+                    src={form.cover_image_url}
+                    alt=""
+                    className="w-full h-28 object-cover rounded-lg mb-3"
+                  />
+                )}
+                <h3 className="text-sm font-semibold text-foreground line-clamp-2">
+                  {form.title || "Titre de l'article"}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-2 line-clamp-3">
+                  {form.excerpt || "L'extrait apparaîtra ici."}
+                </p>
+              </div>
+
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full shadow-glow"
+              >
+                {saving
+                  ? "Enregistrement..."
+                  : form.status === "published"
+                    ? "Publier l'article"
+                    : "Sauvegarder le brouillon"}
               </Button>
             </div>
           </div>

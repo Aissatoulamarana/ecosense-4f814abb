@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -22,8 +23,29 @@ import educationImg from "@/assets/2026-education-handwashing.jpg";
 import sustainabilityImg from "@/assets/2026-sustainability.jpg";
 import aerialVillage from "@/assets/2026-aerial-village.jpg";
 import engineerImg from "@/assets/2026-engineer-portrait.jpg";
+import { dynamicSupabase } from "@/lib/supabase-dynamic";
 
-const services = [
+interface PublicService {
+  id: string;
+  title: string;
+  description: string;
+  icon: typeof Cpu;
+  image: string;
+  features: string[];
+}
+
+interface ServiceRow {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  image_url: string | null;
+  features: string[] | null;
+  display_order: number;
+  is_active: boolean;
+}
+
+const defaultServices: PublicService[] = [
   {
     id: "tech",
     title: "Solutions Technologiques Innovantes",
@@ -105,50 +127,89 @@ const processSteps = [
   {
     icon: ClipboardCheck,
     title: "Consultation",
-    description: "Nous évaluons vos besoins et développons un plan de solution sur mesure.",
+    description:
+      "Nous évaluons vos besoins et développons un plan de solution sur mesure.",
   },
   {
     icon: Cog,
     title: "Mise en Œuvre",
-    description: "Nos équipes d'experts exécutent le projet avec précision et soin.",
+    description:
+      "Nos équipes d'experts exécutent le projet avec précision et soin.",
   },
   {
     icon: Wrench,
     title: "Maintenance",
-    description: "Un soutien continu assure le succès et la durabilité à long terme.",
+    description:
+      "Un soutien continu assure le succès et la durabilité à long terme.",
   },
 ];
 
 export default function Services() {
+  const [services, setServices] = useState<PublicService[]>(defaultServices);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      const { data, error } = await dynamicSupabase
+        .from<ServiceRow>("services")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (error || !data?.length) return;
+
+      setServices(
+        data.map((service) => ({
+          id: service.slug,
+          title: service.title,
+          description: service.description ?? "",
+          icon: Cpu,
+          image: service.image_url || infrastructureImg,
+          features: service.features?.length ? service.features : [],
+        })),
+      );
+    };
+
+    fetchServices();
+  }, []);
+
   return (
     <Layout>
       {/* Hero éditorial avec image immersive */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
         <ParallaxImage
           src={infrastructureImg}
           alt="Infrastructure d'assainissement moderne"
           className="absolute inset-0"
           speed={0.2}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
-        <div className="relative section-container">
+        <div className="relative section-container text-center pt-32 pb-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7 }}
             className="max-w-4xl"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-medium uppercase tracking-widest rounded-full bg-background/60 backdrop-blur-md border border-border/40 text-foreground">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            <motion.span
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-block px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
+            >
               Ce que nous offrons
-            </span>
-            <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-heading font-bold text-foreground tracking-[-0.03em] leading-[0.95] mb-8">
-              Services d'<span className="gradient-text italic font-light">assainissement</span>
-              <br />
-              complets et sur-mesure.
+            </motion.span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
+              Des services complets
+              <span className="gradient-text"> et sur-mesure.</span>
             </h1>
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+              De la construction d'infrastructures a la formation communautaire,
+              nous deployons des solutions d'assainissement durables, lisibles
+              et adaptees aux besoins de chaque terrain.
+            </p>
+            <p className="hidden">
               De la construction d'infrastructures à la formation communautaire,
               nous offrons des solutions de bout en bout qui créent un impact
               positif durable sur la santé publique.
@@ -244,7 +305,11 @@ export default function Services() {
               — Notre Processus
             </span>
             <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-[1.05] mb-4">
-              Comment nous <span className="gradient-text italic font-light">travaillons</span>.
+              Comment nous{" "}
+              <span className="gradient-text italic font-light">
+                travaillons
+              </span>
+              .
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl">
               Une méthodologie éprouvée qui garantit des résultats de qualité et
@@ -294,7 +359,12 @@ export default function Services() {
                   d'assainissement adaptées à votre communauté.
                 </p>
                 <Magnetic strength={0.2}>
-                  <Button asChild size="lg" variant="secondary" className="px-8 h-12">
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="secondary"
+                    className="px-8 h-12"
+                  >
                     <Link to="/contact">
                       Nous contacter
                       <ArrowRight className="w-5 h-5 ml-2" />

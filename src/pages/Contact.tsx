@@ -30,13 +30,18 @@ import contactOffice from "@/assets/2026-contact-office.jpg";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-
 const contactSchema = z.object({
-  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
+  name: z
+    .string()
+    .min(2, "Le nom doit contenir au moins 2 caractères")
+    .max(100),
   email: z.string().email("Veuillez entrer une adresse email valide").max(255),
   phone: z.string().optional(),
   inquiryType: z.string().min(1, "Veuillez sélectionner un type de demande"),
-  message: z.string().min(10, "Le message doit contenir au moins 10 caractères").max(1000),
+  message: z
+    .string()
+    .min(10, "Le message doit contenir au moins 10 caractères")
+    .max(1000),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -45,9 +50,27 @@ export default function Contact() {
   const { settings } = useSiteSettings();
   const b = settings.brand;
   const contactInfo = [
-    { icon: Phone, title: "WhatsApp", value: b.phone, href: b.whatsapp || `tel:${b.phone}`, action: "Discuter avec nous" },
-    { icon: MapPin, title: "Adresse", value: b.address, href: "#map", action: "Voir sur la carte" },
-    { icon: Clock, title: "Heures d'Ouverture", value: b.hours, href: null as string | null, action: null as string | null },
+    {
+      icon: Phone,
+      title: "WhatsApp",
+      value: b.phone,
+      href: b.whatsapp || `tel:${b.phone}`,
+      action: "Discuter avec nous",
+    },
+    {
+      icon: MapPin,
+      title: "Adresse",
+      value: b.address,
+      href: "#map",
+      action: "Voir sur la carte",
+    },
+    {
+      icon: Clock,
+      title: "Heures d'Ouverture",
+      value: b.hours,
+      href: null as string | null,
+      action: null as string | null,
+    },
   ];
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -74,7 +97,9 @@ export default function Contact() {
       if (error) throw error;
       setIsSubmitted(true);
       reset();
-      toast.success("Message envoyé avec succès ! Nous vous répondrons bientôt.");
+      toast.success(
+        "Message envoyé avec succès ! Nous vous répondrons bientôt.",
+      );
     } catch (error) {
       toast.error("Échec de l'envoi du message. Veuillez réessayer.");
     } finally {
@@ -85,8 +110,8 @@ export default function Contact() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="pt-32 pb-20 hero-gradient">
-        <div className="section-container">
+      <section className="pt-32 pb-20 flex items-center justify-center hero-gradient">
+        <div className="section-container text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -228,7 +253,9 @@ export default function Contact() {
                         Je souhaite... *
                       </label>
                       <Select
-                        onValueChange={(value) => setValue("inquiryType", value)}
+                        onValueChange={(value) =>
+                          setValue("inquiryType", value)
+                        }
                       >
                         <SelectTrigger
                           className={
@@ -238,14 +265,18 @@ export default function Contact() {
                           <SelectValue placeholder="Sélectionner une option" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="quote">Demander un devis</SelectItem>
+                          <SelectItem value="quote">
+                            Demander un devis
+                          </SelectItem>
                           <SelectItem value="inquiry">
                             Renseignement général
                           </SelectItem>
                           <SelectItem value="partnership">
                             Discuter d'un partenariat
                           </SelectItem>
-                          <SelectItem value="support">Obtenir de l'aide</SelectItem>
+                          <SelectItem value="support">
+                            Obtenir de l'aide
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       {errors.inquiryType && (

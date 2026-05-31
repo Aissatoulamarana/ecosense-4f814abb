@@ -3,7 +3,9 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
   FileText,
+  Handshake,
   MessageSquare,
+  Settings2,
   Users,
   ExternalLink,
   LogOut,
@@ -19,6 +21,8 @@ import logoEcosense from "@/assets/logo-ecosense.jpg";
 const navItems = [
   { name: "Tableau de bord", href: "/admin", icon: LayoutDashboard },
   { name: "Articles", href: "/admin/blog", icon: FileText },
+  { name: "Services", href: "/admin/services", icon: Settings2 },
+  { name: "Partenaires", href: "/admin/partners", icon: Handshake },
   { name: "Messages", href: "/admin/messages", icon: MessageSquare },
   { name: "Utilisateurs", href: "/admin/users", icon: Users },
   { name: "Reglages", href: "/admin/settings", icon: Settings },

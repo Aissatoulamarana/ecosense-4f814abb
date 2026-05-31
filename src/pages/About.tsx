@@ -67,7 +67,10 @@ export default function About() {
   return (
     <Layout>
       {/* Hero immersif avec photo */}
-      <section ref={heroRef} className="relative min-h-[85vh] flex items-end overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative min-h-[80vh] flex items-center justify-center overflow-hidden"
+      >
         <motion.div style={{ y: heroY }} className="absolute inset-0">
           <img
             src={engineerImg}
@@ -80,25 +83,24 @@ export default function About() {
 
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative section-container pt-32 pb-20"
+          className="relative section-container text-center pt-32 pb-20"
         >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="max-w-3xl"
+            className="max-w-4xl"
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-xs font-medium uppercase tracking-widest rounded-full bg-background/70 backdrop-blur-md border border-border/40 text-foreground">
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               À propos
             </span>
-            <h1 className="text-[clamp(2.5rem,6vw,5.5rem)] font-heading font-bold text-foreground tracking-[-0.03em] leading-[0.95] mb-8">
-              Construire un avenir
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
+              A propos
               <br />
-              <span className="gradient-text italic font-light">durable</span>
-              <span className="text-foreground">, ensemble.</span>
+              <span className="gradient-text">d'Ecosense Solutions.</span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
               Découvrez notre mission, notre vision et les valeurs qui nous
               poussent à créer un changement positif durable en matière
               d'assainissement et d'hygiène.
@@ -122,7 +124,11 @@ export default function About() {
                     Notre Mission
                   </span>
                   <h2 className="text-3xl lg:text-4xl font-heading font-bold text-foreground mb-5 leading-tight">
-                    Apporter des solutions <span className="gradient-text italic font-light">durables</span> à chaque communauté.
+                    Apporter des solutions{" "}
+                    <span className="gradient-text italic font-light">
+                      durables
+                    </span>{" "}
+                    à chaque communauté.
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
                     Chez ECOSENSE SOLUTIONS, nous fournissons des solutions
@@ -145,13 +151,17 @@ export default function About() {
                     Notre Vision
                   </span>
                   <h2 className="text-3xl lg:text-4xl font-heading font-bold text-foreground mb-5 leading-tight">
-                    Des communautés <span className="gradient-text italic font-light">résilientes</span> et saines.
+                    Des communautés{" "}
+                    <span className="gradient-text italic font-light">
+                      résilientes
+                    </span>{" "}
+                    et saines.
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    Voir des communautés propres, saines et résilientes, où chaque
-                    individu bénéficie d'un environnement sûr et d'infrastructures
-                    sanitaires durables, grâce à l'innovation et à des pratiques
-                    responsables.
+                    Voir des communautés propres, saines et résilientes, où
+                    chaque individu bénéficie d'un environnement sûr et
+                    d'infrastructures sanitaires durables, grâce à l'innovation
+                    et à des pratiques responsables.
                   </p>
                 </div>
               </div>
@@ -168,7 +178,9 @@ export default function About() {
               — Nos Valeurs
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold text-foreground tracking-tight max-w-3xl leading-[1.05] mb-4">
-              Ce que nous <span className="gradient-text italic font-light">défendons</span>.
+              Ce que nous{" "}
+              <span className="gradient-text italic font-light">défendons</span>
+              .
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl">
               Les principes qui guident notre travail et façonnent notre culture
@@ -216,14 +228,20 @@ export default function About() {
                 — Notre Impact
               </span>
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold text-foreground tracking-tight leading-[1.05]">
-                Des chiffres qui <span className="gradient-text italic font-light">parlent</span>.
+                Des chiffres qui{" "}
+                <span className="gradient-text italic font-light">parlent</span>
+                .
               </h2>
             </div>
           </ScrollReveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {impactStats.map((stat, index) => (
-              <ScrollReveal key={stat.label} delay={index * 0.1} direction="scale">
+              <ScrollReveal
+                key={stat.label}
+                delay={index * 0.1}
+                direction="scale"
+              >
                 <div className="glass-card p-8 text-center group hover:shadow-glow transition-shadow duration-500">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/15 mb-5 group-hover:scale-110 transition-transform">
                     <stat.icon className="w-8 h-8 text-primary" />
@@ -254,12 +272,19 @@ export default function About() {
               />
             </ScrollReveal>
 
-            <ScrollReveal direction="right" delay={0.1} className="lg:col-span-7">
+            <ScrollReveal
+              direction="right"
+              delay={0.1}
+              className="lg:col-span-7"
+            >
               <span className="inline-block text-xs font-medium uppercase tracking-widest text-accent mb-4">
                 — Notre Approche
               </span>
               <h2 className="text-4xl sm:text-5xl font-heading font-bold text-foreground tracking-tight leading-[1.05] mb-6">
-                Des solutions <span className="gradient-text italic font-light">intégrées</span>
+                Des solutions{" "}
+                <span className="gradient-text italic font-light">
+                  intégrées
+                </span>
                 <br />
                 pour des défis complexes.
               </h2>

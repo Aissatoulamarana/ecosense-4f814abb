@@ -21,7 +21,7 @@ import {
   Code,
   Minus,
 } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -64,6 +64,7 @@ function ToolbarButton({
 }
 
 function Toolbar({ editor }: { editor: Editor }) {
+  const [uploading, setUploading] = useState(false);
   const setLink = useCallback(() => {
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL du lien", previousUrl ?? "https://");
@@ -87,6 +88,16 @@ function Toolbar({ editor }: { editor: Editor }) {
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        toast.error("Seules les images sont acceptées");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Image trop lourde (max 10 Mo)");
+        return;
+      }
+
+      setUploading(true);
       const ext = file.name.split(".").pop();
       const path = `inline/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage
@@ -94,16 +105,19 @@ function Toolbar({ editor }: { editor: Editor }) {
         .upload(path, file, { cacheControl: "3600" });
       if (error) {
         toast.error("Échec de l'upload de l'image");
+        setUploading(false);
         return;
       }
       const { data } = supabase.storage.from("blog-covers").getPublicUrl(path);
       editor.chain().focus().setImage({ src: data.publicUrl }).run();
+      toast.success("Image insérée");
+      setUploading(false);
     };
     input.click();
   }, [editor]);
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 p-2 border-b border-border bg-muted/30 rounded-t-lg">
+    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 p-2 border-b border-border bg-background/95 backdrop-blur rounded-t-lg">
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         active={editor.isActive("bold")}
@@ -200,7 +214,11 @@ function Toolbar({ editor }: { editor: Editor }) {
       >
         <LinkIcon className="w-4 h-4" />
       </ToolbarButton>
-      <ToolbarButton onClick={addImage} title="Insérer une image">
+      <ToolbarButton
+        onClick={addImage}
+        disabled={uploading}
+        title="Insérer une image"
+      >
         <ImageIcon className="w-4 h-4" />
       </ToolbarButton>
 
@@ -266,7 +284,7 @@ export function RichTextEditor({
   // Sync external value changes (e.g., when switching between articles)
   useEffect(() => {
     if (!editor) return;
-    if (value !== editor.getHTML() && value !== "") {
+    if (value !== editor.getHTML()) {
       editor.commands.setContent(value || "", { emitUpdate: false });
     }
   }, [value, editor]);
@@ -276,7 +294,9 @@ export function RichTextEditor({
   return (
     <div className="border border-border rounded-lg bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/30 transition-shadow">
       <Toolbar editor={editor} />
-      <EditorContent editor={editor} />
+      <div className="max-h-[560px] overflow-y-auto">
+        <EditorContent editor={editor} />
+      </div>
       <style>{`
         .prose-editor p { margin: 0.5rem 0; line-height: 1.7; }
         .prose-editor h2 {
