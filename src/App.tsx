@@ -22,6 +22,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminContact from "./pages/admin/AdminContact";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminPartners from "./pages/admin/AdminPartners";
+import OAuthConsent from "./pages/OAuthConsent";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route
               path="/admin"
               element={

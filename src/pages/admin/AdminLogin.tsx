@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,25 +7,32 @@ import { Lock, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import logoEcosense from "@/assets/logo-ecosense.jpg";
 
+function safeNext(next: string | null): string | null {
+  if (!next) return null;
+  // Same-origin relative path only.
+  if (!next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
+
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn, user, isAdmin, loading: authLoading } = useAuth();
+  const { signIn, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const next = safeNext(params.get("next"));
 
   useEffect(() => {
-    console.log("👁 useEffect auth state:", {
-      authLoading,
-      user: user?.email,
-      isAdmin,
-    });
-    if (!authLoading && user && isAdmin) {
-      console.log("🚀 Navigating to /admin");
-      navigate("/admin");
+    if (!authLoading && user) {
+      if (next) {
+        window.location.href = next;
+      } else {
+        navigate("/admin");
+      }
     }
-  }, [user, isAdmin, authLoading, navigate]);
+  }, [user, authLoading, navigate, next]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
